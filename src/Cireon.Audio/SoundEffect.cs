@@ -50,11 +50,10 @@ namespace Cireon.Audio
         public void Play()
         {
             // Bind the buffers to a source and play it
-            int sourceID = AudioManager.Instance.SourceManager.RequestSourceHandle();
-            AL.SourceQueueBuffers(sourceID, this.bufferIDs.Length, this.bufferIDs);
-            AL.Source(sourceID, ALSourcef.Gain, AudioManager.Instance.EffectsVolume);
-            AL.SourcePlay(sourceID);
-            ALHelper.Check();
+            var source = AudioManager.Instance.SourceManager.RequestSource();
+            source.QueueBuffers(this.bufferIDs.Length, this.bufferIDs);
+            source.Volume = AudioManager.Instance.EffectsVolume;
+            source.Play();
         }
     }
 }

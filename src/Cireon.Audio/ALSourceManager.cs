@@ -4,58 +4,43 @@ using OpenTK.Audio.OpenAL;
 
 namespace Cireon.Audio
 {
-    public class ALSourceManager
+    public class SourceManager
     {
-        private readonly List<int> sourceHandles = new List<int>();
+        private readonly List<Source> sources = new List<Source>();
 
-        public ALSourceManager() { }
+        public SourceManager() { }
 
-        public int RequestSourceHandle()
+        public Source RequestSource()
         {
-            int sourceHandle = AL.GenSource();
-            this.sourceHandles.Add(sourceHandle);
-            ALHelper.Check();
-            return sourceHandle;
+            Source s = new Source();
+            this.sources.Add(s);
+            return s;
         }
 
         public void Update()
         {
-            List<int> finishedSources = new List<int>(this.sourceHandles.Count);
+            var finishedSources = new List<Source>(this.sources.Count);
 
-            foreach (int i in this.sourceHandles)
+            foreach (var s in this.sources)
             {
-                int queuedBuffers;
-                AL.GetSource(i, ALGetSourcei.BuffersQueued, out queuedBuffers);
-
-                int processedBuffers;
-                AL.GetSource(i, ALGetSourcei.BuffersProcessed, out processedBuffers);
-
                 // Finished playing, clear up the source handle
-                if (queuedBuffers <= processedBuffers)
+                if (s.FinishedPlaying)
                 {
-                    AL.SourceStop(i);
-                    AL.DeleteSource(i);
-                    finishedSources.Add(i);
-
-                    ALHelper.Check();
+                    s.Dispose();
+                    finishedSources.Add(s);
                 }
             }
 
-            foreach (int i in finishedSources)
-                this.sourceHandles.Remove(i);
+            foreach (var s in finishedSources)
+                this.sources.Remove(s);
         }
 
         public void Dispose()
         {
-            foreach (int i in this.sourceHandles)
-            {
-                AL.SourceStop(i);
-                AL.DeleteSource(i);
+            foreach (var s in this.sources)
+                s.Dispose();
 
-                ALHelper.Check();
-            }
-
-            this.sourceHandles.Clear();
+            this.sources.Clear();
         }
     }
 }

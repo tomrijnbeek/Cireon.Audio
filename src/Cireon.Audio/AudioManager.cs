@@ -21,7 +21,7 @@ namespace Cireon.Audio
             AudioManager.Instance.dispose();
         }
 
-        public readonly ALSourceManager SourceManager;
+        public readonly SourceManager SourceManager;
         public readonly SoundLibrary Sounds;
 
         private readonly AudioContext context;
@@ -65,7 +65,7 @@ namespace Cireon.Audio
             this.context = new AudioContext();
             this.streamer = new OggStreamer();
 
-            this.SourceManager = new ALSourceManager();
+            this.SourceManager = new SourceManager();
             this.Sounds = new SoundLibrary(sfxPath);
 
             this.masterVolume = 1;
