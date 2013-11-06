@@ -1,7 +1,7 @@
 ﻿using System;
 using OpenTK.Audio.OpenAL;
 
-namespace BeardGame.Audio
+namespace Cireon.Audio
 {
     static class ALHelper
     {

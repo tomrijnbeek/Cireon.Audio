@@ -5,7 +5,7 @@ using NVorbis.OpenTKSupport;
 using OpenTK.Audio;
 using OpenTK.Audio.OpenAL;
 
-namespace BeardGame.Audio
+namespace Cireon.Audio
 {
     sealed class AudioManager
     {

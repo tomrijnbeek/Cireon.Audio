@@ -4,7 +4,7 @@ using NVorbis;
 using NVorbis.OpenTKSupport;
 using OpenTK.Audio.OpenAL;
 
-namespace BeardGame.Audio
+namespace Cireon.Audio
 {
     sealed class SoundEffect
     {

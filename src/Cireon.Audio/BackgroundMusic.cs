@@ -2,7 +2,7 @@
 using NVorbis;
 using NVorbis.OpenTKSupport;
 
-namespace BeardGame.Audio
+namespace Cireon.Audio
 {
     sealed class BackgroundMusic
     {

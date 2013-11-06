@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using OpenTK.Audio.OpenAL;
 
-namespace BeardGame.Audio
+namespace Cireon.Audio
 {
     public class ALSourceManager
     {
