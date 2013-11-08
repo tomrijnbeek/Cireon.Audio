@@ -3,7 +3,7 @@ using OpenTK.Audio.OpenAL;
 
 namespace Cireon.Audio
 {
-    static class ALHelper
+    public static class ALHelper
     {
         public static readonly XRamExtension XRam = new XRamExtension();
         public static readonly EffectsExtension Efx = new EffectsExtension();

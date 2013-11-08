@@ -7,7 +7,7 @@ using OpenTK.Audio.OpenAL;
 
 namespace Cireon.Audio
 {
-    sealed class AudioManager
+    public sealed class AudioManager
     {
         public static AudioManager Instance { get; private set; }
 

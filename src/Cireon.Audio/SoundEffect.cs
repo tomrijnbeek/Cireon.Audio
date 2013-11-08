@@ -6,7 +6,7 @@ using OpenTK.Audio.OpenAL;
 
 namespace Cireon.Audio
 {
-    sealed class SoundEffect
+    public sealed class SoundEffect
     {
         private readonly int[] bufferIDs;
 

@@ -4,7 +4,7 @@ using OpenTK.Audio.OpenAL;
 
 namespace Cireon.Audio
 {
-    public class SourceManager
+    public sealed class SourceManager
     {
         private readonly List<Source> sources = new List<Source>();
 

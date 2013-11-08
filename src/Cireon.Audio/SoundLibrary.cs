@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Cireon.Audio
 {
-    sealed class SoundLibrary
+    public sealed class SoundLibrary
     {
         private readonly Dictionary<string, SoundEffect> soundEffects = new Dictionary<string, SoundEffect>();
 

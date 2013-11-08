@@ -4,7 +4,7 @@ using NVorbis.OpenTKSupport;
 
 namespace Cireon.Audio
 {
-    sealed class BackgroundMusic
+    public sealed class BackgroundMusic
     {
         private readonly OggStream stream;
 
