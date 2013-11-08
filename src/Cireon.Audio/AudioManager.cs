@@ -7,21 +7,42 @@ using OpenTK.Audio.OpenAL;
 
 namespace Cireon.Audio
 {
+    /// <summary>
+    /// Main audio manager.
+    /// Keeps track of several sub-managers and provides global access to audio-related objects.
+    /// </summary>
     public sealed class AudioManager
     {
+        /// <summary>
+        /// Singleton instance.
+        /// </summary>
         public static AudioManager Instance { get; private set; }
 
+        /// <summary>
+        /// Initializes the singleton instance.
+        /// </summary>
+        /// <param name="sfxPath">Path containing all soundeffects that should be pre-buffered.</param>
         public static void Initialize(string sfxPath)
         {
             AudioManager.Instance = new AudioManager(sfxPath);
         }
 
+        /// <summary>
+        /// Disposes the singleton instance.
+        /// Includes clearing all buffers and releasing all OpenAL resources.
+        /// </summary>
         public static void Dispose()
         {
             AudioManager.Instance.dispose();
         }
 
+        /// <summary>
+        /// The manager that keeps track of all OpenAL Sources.
+        /// </summary>
         public readonly SourceManager SourceManager;
+        /// <summary>
+        /// Collection of all soundeffects.
+        /// </summary>
         public readonly SoundLibrary Sounds;
 
         private readonly AudioContext context;
@@ -31,6 +52,9 @@ namespace Cireon.Audio
 
         private float masterVolume, musicVolume, effectsVolume;
 
+        /// <summary>
+        /// The master volume that is applied to both the music and soundeffects.
+        /// </summary>
         public float MasterVolume
         {
             get { return this.masterVolume; }
@@ -41,6 +65,9 @@ namespace Cireon.Audio
                 this.onEffectsVolumeChanged();
             }
         }
+        /// <summary>
+        /// The volume that is used for playing the music.
+        /// </summary>
         public float MusicVolume
         {
             get { return this.musicVolume; }
@@ -50,6 +77,9 @@ namespace Cireon.Audio
                 this.onMusicVolumeChanged();
             }
         }
+        /// <summary>
+        /// The volume that is used for playing the sound effects.
+        /// </summary>
         public float EffectsVolume
         {
             get { return this.effectsVolume; }
@@ -73,6 +103,10 @@ namespace Cireon.Audio
             this.effectsVolume = 1;
         }
 
+        /// <summary>
+        /// Updates all audio-related resources.
+        /// </summary>
+        /// <param name="elapsedTimeS">The elapsed time in seconds since the last update.</param>
         public void Update(float elapsedTimeS)
         {
             this.SourceManager.Update();
@@ -91,6 +125,10 @@ namespace Cireon.Audio
         }
         #endregion
 
+        /// <summary>
+        /// Changes the background music to the specified file.
+        /// </summary>
+        /// <param name="file">The file containing the new background music (ogg-file).</param>
         public void SetBGM(string file)
         {
             if (this.currentBGM != null)

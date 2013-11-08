@@ -3,11 +3,14 @@ using OpenTK.Audio.OpenAL;
 
 namespace Cireon.Audio
 {
+    /// <summary>
+    /// OpenAL Helper class.
+    /// </summary>
     public static class ALHelper
     {
-        public static readonly XRamExtension XRam = new XRamExtension();
-        public static readonly EffectsExtension Efx = new EffectsExtension();
-
+        /// <summary>
+        /// Checks whether OpenAL has thrown an error and throws an exception if so.
+        /// </summary>
         public static void Check()
         {
             ALError error;

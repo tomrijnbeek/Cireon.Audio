@@ -21,6 +21,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -45,7 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ALHelper.cs" />
-    <Compile Include="ALSourceManager.cs" />
+    <Compile Include="SourceManager.cs" />
     <Compile Include="AudioManager.cs" />
     <Compile Include="BackgroundMusic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
