@@ -27,6 +27,15 @@ namespace Cireon.Audio
         }
 
         /// <summary>
+        /// The amount of gain for high frequencies.
+        /// </summary>
+        public float LowPassHFGain
+        {
+            get { return this.stream.LowPassHFGain; }
+            set { this.stream.LowPassHFGain = value; }
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="file">The filename of the ogg-file that contains the music.</param>
