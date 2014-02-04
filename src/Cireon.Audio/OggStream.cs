@@ -28,6 +28,20 @@ namespace Cireon.Audio
 
         public EventHandler Finished;
 
+        public float Volume
+        {
+            get { return this.Source.Volume; }
+            set { this.Source.Volume = value; }
+        }
+
+        public float Pitch
+        {
+            get { return this.Source.Pitch; }
+            set { this.Source.Pitch = value; }
+        }
+
+        public bool IsLooped { get; set; }
+
         public OggStream(string filename, int bufferCount = DefaultBufferCount) : this(File.OpenRead(filename), bufferCount) { }
         public OggStream(Stream stream, int bufferCount = DefaultBufferCount)
         {
@@ -135,14 +149,6 @@ namespace Cireon.Audio
                 OggStreamer.Instance.RemoveStream(this);
             }
         }
-
-        public float Volume
-        {
-            get { return this.Source.Volume; }
-            set { this.Source.Volume = value; }
-        }
-
-        public bool IsLooped { get; set; }
 
         public void Dispose()
         {

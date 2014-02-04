@@ -22,6 +22,12 @@
             set { this.stream.Volume = value; }
         }
 
+        public float Pitch
+        {
+            get { return this.stream.Pitch; }
+            set { this.stream.Pitch = value; }
+        }
+
         /// <summary>
         /// 
         /// </summary>

@@ -1,4 +1,5 @@
 ﻿using OpenTK.Audio;
+using OpenTK.Audio.OpenAL;
 
 namespace Cireon.Audio
 {

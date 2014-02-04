@@ -60,13 +60,22 @@ namespace Cireon.Audio
         /// </summary>
         public float Volume
         {
-            get
-            {
-                return this.volume;
-            }
+            get { return this.volume; }
             set
             {
                 AL.Source(this.Handle, ALSourcef.Gain, this.volume = value);
+                ALHelper.Check();
+            }
+        }
+
+        private float pitch;
+
+        public float Pitch
+        {
+            get { return this.pitch; }
+            set
+            {
+                AL.Source(this.Handle, ALSourcef.Pitch, this.pitch = value);
                 ALHelper.Check();
             }
         }
@@ -78,6 +87,7 @@ namespace Cireon.Audio
         {
             this.Handle = AL.GenSource();
             ALHelper.Check();
+            this.pitch = 1;
         }
 
         /// <summary>

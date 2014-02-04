@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using OpenTK.Audio.OpenAL;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Cireon.Audio
 {
@@ -12,17 +11,12 @@ namespace Cireon.Audio
         private readonly List<Source> sources = new List<Source>();
 
         /// <summary>
-        /// 
-        /// </summary>
-        public SourceManager() { }
-
-        /// <summary>
         /// Allocates a new source.
         /// </summary>
         /// <returns>The source wrapper for the allocated source.</returns>
         public Source RequestSource()
         {
-            Source s = new Source();
+            var s = new Source();
             this.sources.Add(s);
             return s;
         }
@@ -34,14 +28,10 @@ namespace Cireon.Audio
         {
             var finishedSources = new List<Source>(this.sources.Count);
 
-            foreach (var s in this.sources)
+            foreach (var s in this.sources.Where(s => s.FinishedPlaying))
             {
-                // Finished playing, clear up the source handle
-                if (s.FinishedPlaying)
-                {
-                    s.Dispose();
-                    finishedSources.Add(s);
-                }
+                s.Dispose();
+                finishedSources.Add(s);
             }
 
             foreach (var s in finishedSources)
