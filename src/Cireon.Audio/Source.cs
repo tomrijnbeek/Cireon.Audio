@@ -1,5 +1,4 @@
-﻿using System;
-using OpenTK.Audio.OpenAL;
+﻿using OpenTK.Audio.OpenAL;
 
 namespace Cireon.Audio
 {
@@ -55,6 +54,7 @@ namespace Cireon.Audio
             get { return this.ProcessedBuffers >= this.QueuedBuffers; }
         }
 
+        private float volume;
         /// <summary>
         /// The volume at which the source plays its buffers.
         /// </summary>
@@ -62,11 +62,13 @@ namespace Cireon.Audio
         {
             get
             {
-                float gain;
-                AL.GetSource(this.Handle, ALSourcef.Gain, out gain);
-                return gain;
+                return this.volume;
             }
-            set { AL.Source(this.Handle, ALSourcef.Gain, value); }
+            set
+            {
+                AL.Source(this.Handle, ALSourcef.Gain, this.volume = value);
+                ALHelper.Check();
+            }
         }
 
         /// <summary>
@@ -81,12 +83,42 @@ namespace Cireon.Audio
         /// <summary>
         /// Adds buffers to the end of the buffer queue of this source.
         /// </summary>
+        /// <param name="bufferID">The handle to the OpenAL buffer.</param>
+        public void QueueBuffer(int bufferID)
+        {
+            AL.SourceQueueBuffer(this.Handle, bufferID);
+        }
+
+        /// <summary>
+        /// Adds buffers to the end of the buffer queue of this source.
+        /// </summary>
         /// <param name="bufferLength">The length each buffer has.</param>
         /// <param name="bufferIDs">The handles to the OpenAL buffers.</param>
         public void QueueBuffers(int bufferLength, int[] bufferIDs)
         {
             AL.SourceQueueBuffers(this.Handle, bufferLength, bufferIDs);
             ALHelper.Check();
+        }
+
+        public void UnqueueBuffers()
+        {
+            AL.SourceUnqueueBuffers(this.Handle, this.QueuedBuffers);
+            ALHelper.Check();
+        }
+
+        public int[] UnqueueBuffers(int count)
+        {
+            return AL.SourceUnqueueBuffers(this.Handle, count);
+        }
+
+        public void UnqueueBuffers(int[] bufferIDs)
+        {
+            AL.SourceUnqueueBuffers(this.Handle, this.QueuedBuffers, bufferIDs);
+        }
+
+        public int[] UnqueueProcessedBuffers()
+        {
+            return AL.SourceUnqueueBuffers(this.Handle, this.ProcessedBuffers);
         }
 
         /// <summary>

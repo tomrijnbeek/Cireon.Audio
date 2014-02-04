@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using NVorbis;
-using NVorbis.OpenTKSupport;
-using OpenTK.Audio;
-using OpenTK.Audio.OpenAL;
+﻿using OpenTK.Audio;
 
 namespace Cireon.Audio
 {
@@ -46,9 +41,9 @@ namespace Cireon.Audio
         public readonly SoundLibrary Sounds;
 
         private readonly AudioContext context;
-        private readonly OggStreamer streamer;
 
         private BackgroundMusic currentBGM;
+        public BackgroundMusic BGM { get { return this.currentBGM; } }
 
         private float masterVolume, musicVolume, effectsVolume;
 
@@ -93,7 +88,7 @@ namespace Cireon.Audio
         private AudioManager(string sfxPath)
         {
             this.context = new AudioContext();
-            this.streamer = new OggStreamer();
+            OggStreamer.Initialize();
 
             this.SourceManager = new SourceManager();
             this.Sounds = new SoundLibrary(sfxPath);
@@ -134,8 +129,7 @@ namespace Cireon.Audio
             if (this.currentBGM != null)
                 this.currentBGM.Dispose();
 
-            this.currentBGM = new BackgroundMusic(file);
-            this.currentBGM.Volume = this.masterVolume * this.musicVolume;
+            this.currentBGM = new BackgroundMusic(file) { Volume = this.masterVolume * this.musicVolume };
             this.currentBGM.Play();
         }
 
@@ -145,7 +139,7 @@ namespace Cireon.Audio
                 this.currentBGM.Dispose();
 
             this.SourceManager.Dispose();
-            this.streamer.Dispose();
+            OggStreamer.DisposeInstance();
             this.context.Dispose();
         }
     }

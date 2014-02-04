@@ -37,9 +37,6 @@
     <Reference Include="NVorbis">
       <HintPath>..\..\libs\NVorbis.dll</HintPath>
     </Reference>
-    <Reference Include="NVorbis.OpenTKSupport">
-      <HintPath>..\..\libs\NVorbis.OpenTKSupport.dll</HintPath>
-    </Reference>
     <Reference Include="OpenTK">
       <HintPath>..\..\libs\OpenTK.dll</HintPath>
     </Reference>
@@ -47,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ALHelper.cs" />
+    <Compile Include="OggStream.cs" />
     <Compile Include="SourceManager.cs" />
     <Compile Include="AudioManager.cs" />
     <Compile Include="BackgroundMusic.cs" />

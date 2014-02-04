@@ -1,8 +1,4 @@
-﻿using System;
-using NVorbis;
-using NVorbis.OpenTKSupport;
-
-namespace Cireon.Audio
+﻿namespace Cireon.Audio
 {
     /// <summary>
     /// Wrapper class for background music.
@@ -24,15 +20,6 @@ namespace Cireon.Audio
         {
             get { return this.stream.Volume; }
             set { this.stream.Volume = value; }
-        }
-
-        /// <summary>
-        /// The amount of gain for high frequencies.
-        /// </summary>
-        public float LowPassHFGain
-        {
-            get { return this.stream.LowPassHFGain; }
-            set { this.stream.LowPassHFGain = value; }
         }
 
         /// <summary>

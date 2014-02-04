@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using NVorbis;
-using NVorbis.OpenTKSupport;
 using OpenTK.Audio.OpenAL;
 
 namespace Cireon.Audio
