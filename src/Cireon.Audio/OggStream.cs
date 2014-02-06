@@ -16,7 +16,7 @@ namespace Cireon.Audio
         internal readonly object PrepareMutex = new object();
 
         public readonly Source Source;
-        internal readonly int[] ALBufferIds;
+        internal readonly SoundBuffer Buffer;
 
         private readonly Stream underlyingStream;
 
@@ -47,7 +47,7 @@ namespace Cireon.Audio
         {
             this.BufferCount = bufferCount;
 
-            this.ALBufferIds = AL.GenBuffers(bufferCount);
+            this.Buffer = new SoundBuffer(bufferCount);
             this.Source = new Source();
 
             //if (ALHelper.XRam.IsInitialized)
@@ -169,7 +169,7 @@ namespace Cireon.Audio
             }
 
             this.Source.Dispose();
-            AL.DeleteBuffers(this.ALBufferIds);
+            this.Buffer.Dispose();
 
             ALHelper.Check();
         }
@@ -223,8 +223,8 @@ namespace Cireon.Audio
             if (precache)
             {
                 // Fill first buffer synchronously
-                OggStreamer.Instance.FillBuffer(this, this.ALBufferIds[0]);
-                this.Source.QueueBuffer(this.ALBufferIds[0]);
+                OggStreamer.Instance.FillBuffer(this, this.Buffer.Handles[0]);
+                this.Source.QueueBuffer(this.Buffer.Handles[0]);
 
                 // Schedule the others asynchronously
                 OggStreamer.Instance.AddStream(this);
@@ -370,13 +370,14 @@ namespace Cireon.Audio
                         int queued = stream.Source.QueuedBuffers;
                         int processed = stream.Source.ProcessedBuffers;
 
+                        // When there are no unprocessed buffers and the buffer fully filled, no need to do anything.
                         if (processed == 0 && queued == stream.BufferCount) continue;
 
                         int[] tempBuffers;
                         if (processed > 0)
                             tempBuffers = stream.Source.UnqueueProcessedBuffers();
                         else
-                            tempBuffers = stream.ALBufferIds.Skip(queued).ToArray();
+                            tempBuffers = stream.Buffer.Handles.Skip(queued).ToArray();
 
                         int bufIdx = 0;
                         for (; bufIdx < tempBuffers.Length; bufIdx++)

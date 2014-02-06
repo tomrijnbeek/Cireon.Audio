@@ -49,6 +49,12 @@ namespace Cireon.Audio
                 this.FillBuffer((index + i) % this.Handles.Length, data[i], format, sampleRate);
         }
 
+        public void Dispose()
+        {
+            AL.DeleteBuffers(this.Handles);
+            ALHelper.Check();
+        }
+
         public static SoundBuffer FromFile(string file)
         {
             var buffers = new List<short[]>();
