@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ALHelper.cs" />
+    <Compile Include="SoundBuffer.cs" />
     <Compile Include="OggStream.cs" />
     <Compile Include="SourceManager.cs" />
     <Compile Include="AudioManager.cs" />
@@ -52,6 +53,7 @@
     <Compile Include="SoundEffect.cs" />
     <Compile Include="SoundLibrary.cs" />
     <Compile Include="Source.cs" />
+    <Compile Include="StreamBuffer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

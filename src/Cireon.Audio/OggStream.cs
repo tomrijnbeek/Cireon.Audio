@@ -341,24 +341,13 @@ namespace Cireon.Audio
             lock (this.readMutex)
             {
                 readSamples = stream.Reader.ReadSamples(this.readSampleBuffer, 0, this.BufferSize);
-                OggStreamer.CastBuffer(this.readSampleBuffer, this.castBuffer, readSamples);
+                SoundBuffer.CastBuffer(this.readSampleBuffer, this.castBuffer, readSamples);
             }
             AL.BufferData(bufferId, stream.Reader.Channels == 1 ? ALFormat.Mono16 : ALFormat.Stereo16, this.castBuffer,
                           readSamples * sizeof(short), stream.Reader.SampleRate);
             ALHelper.Check();
 
             return readSamples != this.BufferSize;
-        }
-
-        public static void CastBuffer(float[] inBuffer, short[] outBuffer, int length)
-        {
-            for (int i = 0; i < length; i++)
-            {
-                var temp = (int)(32767f * inBuffer[i]);
-                if (temp > short.MaxValue) temp = short.MaxValue;
-                else if (temp < short.MinValue) temp = short.MinValue;
-                outBuffer[i] = (short)temp;
-            }
         }
 
         public void EnsureBuffersFilled()

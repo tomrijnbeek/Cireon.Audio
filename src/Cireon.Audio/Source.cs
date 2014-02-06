@@ -90,6 +90,11 @@ namespace Cireon.Audio
             this.pitch = 1;
         }
 
+        public void QueueBuffer(SoundBuffer buffer)
+        {
+            this.QueueBuffers(buffer.Handles.Length, buffer.Handles);
+        }
+
         /// <summary>
         /// Adds buffers to the end of the buffer queue of this source.
         /// </summary>
