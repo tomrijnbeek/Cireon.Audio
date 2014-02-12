@@ -1,5 +1,4 @@
 ﻿using OpenTK.Audio;
-using OpenTK.Audio.OpenAL;
 
 namespace Cireon.Audio
 {
@@ -86,6 +85,18 @@ namespace Cireon.Audio
             }
         }
 
+        private float pitch = 1;
+
+        public float Pitch
+        {
+            get { return this.pitch; }
+            set
+            {
+                this.pitch = value;
+                this.onPitchChanged();
+            }
+        }
+
         private AudioManager(string sfxPath)
         {
             this.context = new AudioContext();
@@ -118,6 +129,14 @@ namespace Cireon.Audio
         private void onEffectsVolumeChanged()
         {
 
+        }
+        #endregion
+
+        #region Pitch
+        private void onPitchChanged()
+        {
+            if (this.currentBGM != null)
+                this.currentBGM.Pitch = this.pitch;
         }
         #endregion
 
