@@ -1,8 +1,14 @@
-﻿namespace Cireon.Audio
+﻿using System;
+
+namespace Cireon.Audio
 {
     sealed public class SingleSongBackgroundMusic : IBackgroundMusic
     {
         private readonly Song song;
+
+        private float globalVolume, localVolume = 1;
+        private FadeDefinition currentFade;
+        private Action fadeCallback;
 
         public SingleSongBackgroundMusic(Song s)
         {
@@ -15,7 +21,25 @@
 
         public void Update(float elapsedTimeS)
         {
-            
+            Console.WriteLine("{0} x {1} = {2}", this.localVolume, this.globalVolume, this.localVolume * this.globalVolume);
+
+            if (this.currentFade != null)
+            {
+                this.currentFade.Update(elapsedTimeS);
+                this.localVolume = this.currentFade.CurrentVolume;
+                this.OnVolumeChanged(this.globalVolume);
+
+                if (this.currentFade.Finished)
+                {
+                    this.currentFade = null;
+
+                    if (this.fadeCallback != null)
+                    {
+                        this.fadeCallback();
+                        this.fadeCallback = null;
+                    }
+                }
+            }
         }
 
         public void Start()
@@ -26,11 +50,19 @@
         public void Stop()
         {
             this.song.Stop();
+            this.localVolume = 1;
+        }
+
+        public void FadeOut(float time, Action callback)
+        {
+            this.currentFade = new FadeDefinition(time, this.localVolume, 0);
+            this.fadeCallback = callback;
         }
 
         public void OnVolumeChanged(float volume)
         {
-            this.song.Volume = volume;
+            this.globalVolume = volume;
+            this.song.Volume = this.globalVolume * this.localVolume;
         }
 
         public void OnPitchChanged(float pitch)

@@ -47,6 +47,7 @@
     <Compile Include="bgm\IBackgroundMusic.cs" />
     <Compile Include="bgm\MultipleSongBackgroundMusic.cs" />
     <Compile Include="bgm\SingleSongBackgroundMusic.cs" />
+    <Compile Include="FadeDefinition.cs" />
     <Compile Include="SoundBuffer.cs" />
     <Compile Include="OggStream.cs" />
     <Compile Include="SourceManager.cs" />

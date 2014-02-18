@@ -1,4 +1,6 @@
-﻿using OpenTK.Audio;
+﻿using System;
+using System.Net.NetworkInformation;
+using OpenTK.Audio;
 
 namespace Cireon.Audio
 {
@@ -153,7 +155,37 @@ namespace Cireon.Audio
             this.currentBGM = bgm;
 
             if (this.currentBGM != null)
+            {
+                this.onMusicVolumeChanged();
+                this.onPitchChanged();
                 this.currentBGM.Start();
+            }
+        }
+
+        /// <summary>
+        /// Sets the background music to the specified controller, fading out the old background music.
+        /// </summary>
+        /// <param name="bgm"></param>
+        /// <param name="fadeDuration"></param>
+        public void SetBGMWithFadeOut(IBackgroundMusic bgm, float fadeDuration = 0.5f)
+        {
+            if (this.currentBGM == null)
+            {
+                this.SetBGM(bgm);
+                return;
+            }
+
+            this.currentBGM.FadeOut(fadeDuration, () => this.SetBGM(bgm));
+        }
+
+        public void SetBGMWithFade(IBackgroundMusic bgm, float fadeDuration = 0.25f)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetBGMWithCrossFade(IBackgroundMusic bgm, float fadeDuration = 0.5f)
+        {
+            throw new NotImplementedException();
         }
 
         private void dispose()

@@ -13,8 +13,11 @@ namespace Cireon.Audio
 
         private Song currentSong;
 
-        private float volume;
+        private float globalVolume, localVolume = 1;
         private float pitch;
+
+        private FadeDefinition currentFade;
+        private Action fadeCallback;
 
         public MultipleSongBackgroundMusic(IEnumerable<Song> songs)
         {
@@ -33,6 +36,24 @@ namespace Cireon.Audio
         {
             if (this.currentSong.FinishedPlaying)
                 this.propagateSong();
+
+            if (this.currentFade != null)
+            {
+                this.currentFade.Update(elapsedTimeS);
+                this.localVolume = this.currentFade.CurrentVolume;
+                this.OnVolumeChanged(this.globalVolume);
+
+                if (this.currentFade.Finished)
+                {
+                    this.currentFade = null;
+
+                    if (this.fadeCallback != null)
+                    {
+                        this.fadeCallback();
+                        this.fadeCallback = null;
+                    }
+                }
+            }
         }
 
         public void Start()
@@ -46,24 +67,37 @@ namespace Cireon.Audio
         {
             this.currentSong.Stop();
             this.currentSong = null;
+            this.localVolume = 1;
+        }
+
+        public void FadeOut(float time, Action callback)
+        {
+            this.currentFade = new FadeDefinition(time, this.localVolume, 0);
+            this.fadeCallback = callback;
         }
 
         public void OnVolumeChanged(float volume)
         {
-            this.volume = volume;
-            this.currentSong.Volume = this.volume;
+            this.globalVolume = volume;
+            if (this.currentSong != null)
+                this.currentSong.Volume = this.globalVolume;
         }
 
         public void OnPitchChanged(float pitch)
         {
             this.pitch = pitch;
-            this.currentSong.Pitch = this.pitch;
+            if (this.currentSong != null)
+                this.currentSong.Pitch = this.pitch;
         }
 
         private void propagateSong()
         {
             this.currentSong.Stop();
             this.currentSong = this.selectRandomSong();
+
+            this.currentSong.Volume = this.globalVolume * this.localVolume;
+            this.currentSong.Pitch = this.pitch;
+
             this.currentSong.Play();
         }
 
