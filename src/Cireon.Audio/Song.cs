@@ -96,10 +96,17 @@ namespace Cireon.Audio
             this.stream = new OggStream(this.file);
             this.stream.Prepare();
             this.stream.Finished += this.onStreamFinish;
+
+            this.stream.Volume = this.volume;
+            this.stream.Pitch = this.pitch;
+            this.stream.IsLooped = this.looping;
         }
 
         private void onStreamFinish(object sender, EventArgs e)
         {
+            if (this.looping)
+                return;
+
             this.finished = true;
             this.stream.Dispose();
             this.stream = null;
