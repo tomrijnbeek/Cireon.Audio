@@ -21,8 +21,6 @@ namespace Cireon.Audio
 
         public void Update(float elapsedTimeS)
         {
-            Console.WriteLine("{0} x {1} = {2}", this.localVolume, this.globalVolume, this.localVolume * this.globalVolume);
-
             if (this.currentFade != null)
             {
                 this.currentFade.Update(elapsedTimeS);

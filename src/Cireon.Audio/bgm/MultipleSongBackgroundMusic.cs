@@ -58,9 +58,7 @@ namespace Cireon.Audio
 
         public void Start()
         {
-            this.currentSong = this.selectRandomSong();
-            this.currentSong.Looping = false;
-            this.currentSong.Play();
+            this.propagateSong();
         }
 
         public void Stop()
@@ -92,11 +90,13 @@ namespace Cireon.Audio
 
         private void propagateSong()
         {
-            this.currentSong.Stop();
+            if (this.currentSong != null)
+                this.currentSong.Stop();
             this.currentSong = this.selectRandomSong();
 
             this.currentSong.Volume = this.globalVolume * this.localVolume;
             this.currentSong.Pitch = this.pitch;
+            this.currentSong.Looping = false;
 
             this.currentSong.Play();
         }
