@@ -42,8 +42,7 @@ namespace Cireon.Audio
 
         private readonly AudioContext context;
 
-        private Song currentBGM;
-        public Song BGM { get { return this.currentBGM; } }
+        private IBackgroundMusic currentBGM;
 
         private float masterVolume, musicVolume, effectsVolume;
 
@@ -123,7 +122,7 @@ namespace Cireon.Audio
         private void onMusicVolumeChanged()
         {
             if (this.currentBGM != null)
-                this.currentBGM.Volume = this.masterVolume * this.musicVolume;
+                this.currentBGM.OnVolumeChanged(this.MasterVolume * this.MusicVolume);
         }
 
         private void onEffectsVolumeChanged()
@@ -136,32 +135,27 @@ namespace Cireon.Audio
         private void onPitchChanged()
         {
             if (this.currentBGM != null)
-                this.currentBGM.Pitch = this.pitch;
+                this.currentBGM.OnPitchChanged(this.Pitch);
         }
         #endregion
 
         /// <summary>
-        /// Changes the background music to the specified file.
+        /// Sets the background music to the specified controller.
         /// </summary>
-        /// <param name="file">The file containing the new background music (ogg-file).</param>
-        public void SetBGM(string file, bool looping = true)
+        /// <param name="bgm">The background music controller.</param>
+        public void SetBGM(IBackgroundMusic bgm)
         {
             if (this.currentBGM != null)
-                this.currentBGM.Dispose();
+                this.currentBGM.Stop();
 
-            this.currentBGM = new Song(file)
-            {
-                Volume = this.masterVolume * this.musicVolume,
-                Looping = looping
-            };
-            this.currentBGM.Play();
+            this.currentBGM = bgm;
+
+            if (this.currentBGM != null)
+                this.currentBGM.Start();
         }
 
         private void dispose()
         {
-            if (this.currentBGM != null)
-                this.currentBGM.Dispose();
-
             this.SourceManager.Dispose();
             OggStreamer.DisposeInstance();
             this.context.Dispose();

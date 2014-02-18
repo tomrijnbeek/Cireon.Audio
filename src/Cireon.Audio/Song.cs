@@ -7,14 +7,26 @@
     {
         private readonly OggStream stream;
 
-        private bool prepared;
         /// <summary>
         /// True if the stream has been initialised and ready to play.
         /// </summary>
-        public bool Prepared { get { return this.prepared; } }
+        public bool Prepared
+        {
+            get { return this.stream.Ready; }
+        }
+
+        private bool finished;
 
         /// <summary>
-        /// The volume at which the background music is played.
+        /// Whether the song has finished playing.
+        /// </summary>
+        public bool FinishedPlaying
+        {
+            get { return this.finished; }
+        }
+
+        /// <summary>
+        /// The volume at which the song is played.
         /// </summary>
         public float Volume
         {
@@ -22,51 +34,66 @@
             set { this.stream.Volume = value; }
         }
 
+        /// <summary>
+        /// The pitch at which the song is played.
+        /// </summary>
         public float Pitch
         {
             get { return this.stream.Pitch; }
             set { this.stream.Pitch = value; }
         }
 
+        /// <summary>
+        /// Whether the song should be looping.
+        /// </summary>
         public bool Looping
         {
             get { return this.stream.IsLooped; }
-            set { this.stream.IsLooped = true; }
+            set { this.stream.IsLooped = value; }
         }
 
         /// <summary>
-        /// 
+        /// Creates a new song from a file.
         /// </summary>
         /// <param name="file">The filename of the ogg-file that contains the music.</param>
         public Song(string file)
         {
             this.stream = new OggStream(file);
             this.stream.Prepare();
+            this.stream.Finished += (sender, args) => this.finished = !this.Looping;
         }
 
         /// <summary>
-        /// Updates the background music.
-        /// </summary>
-        /// <param name="elapsedTimeS">Elapsed time in seconds since the last update.</param>
-        public void Update(float elapsedTimeS)
-        {
-            this.prepared = this.stream.Ready;
-        }
-
-        /// <summary>
-        /// Starts playing the background music.
+        /// Starts playing the song.
         /// </summary>
         public void Play()
         {
+            this.finished = false;
             this.stream.Play();
         }
 
         /// <summary>
-        /// Stops the background music and frees up the allocated resources.
+        /// Pauses playing the song.
+        /// </summary>
+        public void Pause()
+        {
+            this.stream.Pause();
+        }
+
+        /// <summary>
+        /// Stops playing the song.
+        /// </summary>
+        public void Stop()
+        {
+            this.stream.Stop();
+        }
+
+        /// <summary>
+        /// Stops the song and frees up the allocated resources.
         /// </summary>
         public void Dispose()
         {
-            this.stream.Stop();
+            this.Stop();
             this.stream.Dispose();
         }
     }
