@@ -125,7 +125,8 @@ namespace Cireon.Audio
         /// </summary>
         public void Pause()
         {
-            this.stream.Pause();
+            if (this.stream != null)
+                this.stream.Pause();
         }
 
         /// <summary>
@@ -133,7 +134,8 @@ namespace Cireon.Audio
         /// </summary>
         public void Stop()
         {
-            this.stream.Stop();
+            if (this.stream != null)
+                this.stream.Stop();
         }
 
         /// <summary>
