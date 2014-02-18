@@ -116,6 +116,8 @@ namespace Cireon.Audio
         public void Update(float elapsedTimeS)
         {
             this.SourceManager.Update();
+            if (this.currentBGM != null)
+                this.currentBGM.Update(elapsedTimeS);
         }
 
         #region Volumes
