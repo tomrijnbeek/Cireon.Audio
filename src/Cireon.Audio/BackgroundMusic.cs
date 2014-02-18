@@ -28,6 +28,12 @@
             set { this.stream.Pitch = value; }
         }
 
+        public bool Looping
+        {
+            get { return this.stream.IsLooped; }
+            set { this.stream.IsLooped = true; }
+        }
+
         /// <summary>
         /// 
         /// </summary>

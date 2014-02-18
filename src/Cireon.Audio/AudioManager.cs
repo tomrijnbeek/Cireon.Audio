@@ -144,12 +144,16 @@ namespace Cireon.Audio
         /// Changes the background music to the specified file.
         /// </summary>
         /// <param name="file">The file containing the new background music (ogg-file).</param>
-        public void SetBGM(string file)
+        public void SetBGM(string file, bool looping = true)
         {
             if (this.currentBGM != null)
                 this.currentBGM.Dispose();
 
-            this.currentBGM = new BackgroundMusic(file) { Volume = this.masterVolume * this.musicVolume };
+            this.currentBGM = new BackgroundMusic(file)
+            {
+                Volume = this.masterVolume * this.musicVolume,
+                Looping = looping
+            };
             this.currentBGM.Play();
         }
 
