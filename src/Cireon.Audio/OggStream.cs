@@ -202,10 +202,8 @@ namespace Cireon.Audio
                 {
                     // This is a bug in the OpenAL implementation
                     // Salvage what we can
-                    int processed = this.Source.ProcessedBuffers;
-                    var salvaged = new int[processed];
-                    if (processed > 0)
-                        this.Source.UnqueueBuffers(salvaged);
+                    if (this.Source.ProcessedBuffers > 0)
+                        this.Source.UnqueueProcessedBuffers();
 
                     // Try turning it off again?
                     this.Source.Stop();

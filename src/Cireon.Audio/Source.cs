@@ -124,14 +124,10 @@ namespace Cireon.Audio
             ALHelper.Check();
         }
 
-        //public int[] UnqueueBuffers(int count)
-        //{
-        //    return AL.SourceUnqueueBuffers(this.Handle, count);
-        //}
-
         public void UnqueueBuffers(int[] bufferIDs)
         {
             AL.SourceUnqueueBuffers(this.Handle, this.QueuedBuffers, bufferIDs);
+            ALHelper.Check();
         }
 
         /// <summary>
@@ -140,7 +136,9 @@ namespace Cireon.Audio
         /// <returns>An integer of buffer handles that are removed.</returns>
         public int[] UnqueueProcessedBuffers()
         {
-            return AL.SourceUnqueueBuffers(this.Handle, this.ProcessedBuffers);
+            var unqueued = AL.SourceUnqueueBuffers(this.Handle, this.ProcessedBuffers);
+            ALHelper.Check();
+            return unqueued;
         }
 
         /// <summary>
