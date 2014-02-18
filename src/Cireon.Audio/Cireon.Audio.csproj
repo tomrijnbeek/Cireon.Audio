@@ -48,7 +48,7 @@
     <Compile Include="OggStream.cs" />
     <Compile Include="SourceManager.cs" />
     <Compile Include="AudioManager.cs" />
-    <Compile Include="BackgroundMusic.cs" />
+    <Compile Include="Song.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SoundEffect.cs" />
     <Compile Include="SoundLibrary.cs" />

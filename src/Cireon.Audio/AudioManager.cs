@@ -42,8 +42,8 @@ namespace Cireon.Audio
 
         private readonly AudioContext context;
 
-        private BackgroundMusic currentBGM;
-        public BackgroundMusic BGM { get { return this.currentBGM; } }
+        private Song currentBGM;
+        public Song BGM { get { return this.currentBGM; } }
 
         private float masterVolume, musicVolume, effectsVolume;
 
@@ -149,7 +149,7 @@ namespace Cireon.Audio
             if (this.currentBGM != null)
                 this.currentBGM.Dispose();
 
-            this.currentBGM = new BackgroundMusic(file)
+            this.currentBGM = new Song(file)
             {
                 Volume = this.masterVolume * this.musicVolume,
                 Looping = looping

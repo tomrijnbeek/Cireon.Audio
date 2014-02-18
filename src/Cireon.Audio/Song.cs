@@ -3,7 +3,7 @@
     /// <summary>
     /// Wrapper class for background music.
     /// </summary>
-    public sealed class BackgroundMusic
+    public sealed class Song
     {
         private readonly OggStream stream;
 
@@ -38,7 +38,7 @@
         /// 
         /// </summary>
         /// <param name="file">The filename of the ogg-file that contains the music.</param>
-        public BackgroundMusic(string file)
+        public Song(string file)
         {
             this.stream = new OggStream(file);
             this.stream.Prepare();
