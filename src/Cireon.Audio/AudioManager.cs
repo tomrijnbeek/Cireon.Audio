@@ -51,6 +51,9 @@ namespace Cireon.Audio
             get { return this.masterVolume; }
             set
             {
+                if (this.masterVolume == value)
+                    return;
+
                 this.masterVolume = value;
                 this.onMusicVolumeChanged();
                 this.onEffectsVolumeChanged();
@@ -64,6 +67,9 @@ namespace Cireon.Audio
             get { return this.musicVolume; }
             set
             {
+                if (this.musicVolume == value)
+                    return;
+
                 this.musicVolume = value;
                 this.onMusicVolumeChanged();
             }
@@ -76,6 +82,9 @@ namespace Cireon.Audio
             get { return this.effectsVolume; }
             set
             {
+                if (this.effectsVolume == value)
+                    return;
+
                 this.effectsVolume = value;
                 this.onEffectsVolumeChanged();
             }
@@ -88,6 +97,9 @@ namespace Cireon.Audio
             get { return this.pitch; }
             set
             {
+                if (this.pitch == value)
+                    return;
+
                 this.pitch = value;
                 this.onPitchChanged();
             }
