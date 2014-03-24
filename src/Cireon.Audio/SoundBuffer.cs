@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using NVorbis;
 using OpenTK.Audio.OpenAL;
 
@@ -57,12 +58,17 @@ namespace Cireon.Audio
 
         public static SoundBuffer FromFile(string file)
         {
+            return SoundBuffer.FromFile(File.OpenRead(file));
+        }
+
+        public static SoundBuffer FromFile(Stream file)
+        {
             var buffers = new List<short[]>();
 
             ALFormat format;
             int sampleRate;
 
-            using (var vorbis = new VorbisReader(file))
+            using (var vorbis = new VorbisReader(file, true))
             {
                 // Save format and samplerate for playback
                 format = vorbis.Channels == 1 ? ALFormat.Mono16 : ALFormat.Stereo16;

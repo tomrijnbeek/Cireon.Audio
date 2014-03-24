@@ -18,10 +18,9 @@ namespace Cireon.Audio
         /// <summary>
         /// Initializes the singleton instance.
         /// </summary>
-        /// <param name="sfxPath">Path containing all soundeffects that should be pre-buffered.</param>
-        public static void Initialize(string sfxPath)
+        public static void Initialize()
         {
-            AudioManager.Instance = new AudioManager(sfxPath);
+            AudioManager.Instance = new AudioManager();
         }
 
         /// <summary>
@@ -37,10 +36,6 @@ namespace Cireon.Audio
         /// The manager that keeps track of all OpenAL Sources.
         /// </summary>
         public readonly SourceManager SourceManager;
-        /// <summary>
-        /// Collection of all soundeffects.
-        /// </summary>
-        public readonly SoundLibrary Sounds;
 
         private readonly AudioContext context;
 
@@ -98,13 +93,12 @@ namespace Cireon.Audio
             }
         }
 
-        private AudioManager(string sfxPath)
+        private AudioManager()
         {
             this.context = new AudioContext();
             OggStreamer.Initialize();
 
             this.SourceManager = new SourceManager();
-            this.Sounds = new SoundLibrary(sfxPath);
 
             this.masterVolume = 1;
             this.musicVolume = 1;

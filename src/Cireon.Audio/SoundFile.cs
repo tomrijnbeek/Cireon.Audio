@@ -1,9 +1,11 @@
-﻿namespace Cireon.Audio
+﻿using System.IO;
+
+namespace Cireon.Audio
 {
     /// <summary>
     /// Wrapper class for sound effects.
     /// </summary>
-    public sealed class SoundEffect
+    public sealed class SoundFile
     {
         private readonly SoundBuffer buffer;
 
@@ -11,9 +13,14 @@
         /// 
         /// </summary>
         /// <param name="file">The filename of the ogg-file that contains the sound effect.</param>
-        public SoundEffect(string file)
+        public SoundFile(string file)
         {
             this.buffer = SoundBuffer.FromFile(file);
+        }
+
+        public SoundFile(Stream stream)
+        {
+            this.buffer = SoundBuffer.FromFile(stream);
         }
 
         /// <summary>
