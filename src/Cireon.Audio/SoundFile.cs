@@ -28,11 +28,16 @@ namespace Cireon.Audio
         /// </summary>
         public void Play()
         {
-            // Bind the buffers to a source and play it
+            this.GenerateSource().Play();
+        }
+
+        public Source GenerateSource()
+        {
             var source = AudioManager.Instance.SourceManager.RequestSource();
             source.QueueBuffer(this.buffer);
             source.Volume = AudioManager.Instance.EffectsVolume;
-            source.Play();
+            source.Pitch = AudioManager.Instance.Pitch;
+            return source;
         }
     }
 }
