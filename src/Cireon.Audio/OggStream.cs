@@ -363,6 +363,9 @@ namespace Cireon.Audio
                             if (!this.streams.Contains(stream))
                                 continue;
 
+                        if (stream.Source.Disposed)
+                            continue;
+
                         bool finished = false;
 
                         int queued = stream.Source.QueuedBuffers;

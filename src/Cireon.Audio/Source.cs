@@ -12,7 +12,7 @@ namespace Cireon.Audio
         /// </summary>
         public readonly int Handle;
 
-        private bool disposed;
+        public bool Disposed { get; private set; }
 
         /// <summary>
         /// The amount of buffers the source has already played.
@@ -60,7 +60,7 @@ namespace Cireon.Audio
         /// </summary>
         public bool FinishedPlaying
         {
-            get { return this.disposed || this.ProcessedBuffers >= this.QueuedBuffers; }
+            get { return this.ProcessedBuffers >= this.QueuedBuffers; }
         }
 
         private float volume;
@@ -183,7 +183,7 @@ namespace Cireon.Audio
         /// </summary>
         public void Dispose()
         {
-            if (this.disposed)
+            if (this.Disposed)
                 return;
 
             if (this.State != ALSourceState.Stopped)
@@ -191,7 +191,7 @@ namespace Cireon.Audio
 
             AL.DeleteSource(this.Handle);
             ALHelper.Check();
-            this.disposed = true;
+            this.Disposed = true;
         }
 
         /// <summary>
