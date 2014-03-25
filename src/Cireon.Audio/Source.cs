@@ -12,6 +12,8 @@ namespace Cireon.Audio
         /// </summary>
         public readonly int Handle;
 
+        private bool disposed;
+
         /// <summary>
         /// The amount of buffers the source has already played.
         /// </summary>
@@ -21,6 +23,7 @@ namespace Cireon.Audio
             {
                 int processedBuffers;
                 AL.GetSource(this.Handle, ALGetSourcei.BuffersProcessed, out processedBuffers);
+                ALHelper.Check();
                 return processedBuffers;
             }
         }
@@ -34,6 +37,7 @@ namespace Cireon.Audio
             {
                 int queuedBuffers;
                 AL.GetSource(this.Handle, ALGetSourcei.BuffersQueued, out queuedBuffers);
+                ALHelper.Check();
                 return queuedBuffers;
             }
         }
@@ -43,7 +47,12 @@ namespace Cireon.Audio
         /// </summary>
         public ALSourceState State
         {
-            get { return AL.GetSourceState(this.Handle); }
+            get
+            {
+                var state = AL.GetSourceState(this.Handle);
+                ALHelper.Check();
+                return state;
+            }
         }
 
         /// <summary>
@@ -51,7 +60,7 @@ namespace Cireon.Audio
         /// </summary>
         public bool FinishedPlaying
         {
-            get { return this.ProcessedBuffers >= this.QueuedBuffers; }
+            get { return this.disposed || this.ProcessedBuffers >= this.QueuedBuffers; }
         }
 
         private float volume;
@@ -102,6 +111,7 @@ namespace Cireon.Audio
         public void QueueBuffer(int bufferID)
         {
             AL.SourceQueueBuffer(this.Handle, bufferID);
+            ALHelper.Check();
         }
 
         /// <summary>
@@ -173,11 +183,15 @@ namespace Cireon.Audio
         /// </summary>
         public void Dispose()
         {
+            if (this.disposed)
+                return;
+
             if (this.State != ALSourceState.Stopped)
                 this.Stop();
 
             AL.DeleteSource(this.Handle);
             ALHelper.Check();
+            this.disposed = true;
         }
 
         /// <summary>
