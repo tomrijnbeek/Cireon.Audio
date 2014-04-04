@@ -7,6 +7,8 @@ namespace Cireon.Audio
     /// </summary>
     public sealed class Song
     {
+        private readonly object streamDisposeMutex = new object();
+
         private readonly string file;
         private readonly bool prepareBuffer;
         private OggStream stream;
@@ -141,8 +143,9 @@ namespace Cireon.Audio
         /// </summary>
         public void Stop()
         {
-            if (this.stream != null)
-                this.stream.Stop();
+            lock (this.streamDisposeMutex)
+                if (this.stream != null)
+                    this.stream.Stop();
         }
 
         /// <summary>
@@ -160,8 +163,10 @@ namespace Cireon.Audio
         public void Dispose()
         {
             this.Stop();
-            if (this.stream != null)
-             this.stream.Dispose();
+
+            lock (this.streamDisposeMutex)
+                if (this.stream != null)
+                    this.stream.Dispose();
         }
     }
 }
