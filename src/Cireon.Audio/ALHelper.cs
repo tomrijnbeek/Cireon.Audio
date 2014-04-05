@@ -13,9 +13,11 @@ namespace Cireon.Audio
         /// </summary>
         public static void Check()
         {
+#if DEBUG
             ALError error;
             if ((error = AL.GetError()) != ALError.NoError)
                 throw new InvalidOperationException(AL.GetErrorString(error));
+#endif
         }
     }
 }
