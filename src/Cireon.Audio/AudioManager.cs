@@ -191,16 +191,29 @@ namespace Cireon.Audio
             this.currentBGM.FadeOut(fadeDuration, () => this.SetBGM(bgm));
         }
 
+        /// <summary>
+        /// Sets the background music to the specified controller, fading out the old background music and fading in the new one.
+        /// </summary>
+        /// <param name="bgm"></param>
+        /// <param name="fadeDuration"></param>
         public void SetBGMWithFade(IBackgroundMusic bgm, float fadeDuration = 0.25f)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Sets the background music to the specified controller, crossfading between the two.
+        /// </summary>
+        /// <param name="bgm"></param>
+        /// <param name="fadeDuration"></param>
         public void SetBGMWithCrossFade(IBackgroundMusic bgm, float fadeDuration = 0.5f)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Disposes the audio manager and all subsystems.
+        /// </summary>
         public void Dispose()
         {
             if (this.disposed)

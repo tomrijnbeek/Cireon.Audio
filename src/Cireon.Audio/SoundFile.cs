@@ -10,7 +10,7 @@ namespace Cireon.Audio
         private readonly SoundBuffer buffer;
 
         /// <summary>
-        /// 
+        /// Loads a new soundfile from a file.
         /// </summary>
         /// <param name="file">The filename of the ogg-file that contains the sound effect.</param>
         public SoundFile(string file)
@@ -18,6 +18,10 @@ namespace Cireon.Audio
             this.buffer = SoundBuffer.FromFile(file);
         }
 
+        /// <summary>
+        /// Loads a new soundfile from a file.
+        /// </summary>
+        /// <param name="stream">The filestream containing the sound effect in ogg-format.</param>
         public SoundFile(Stream stream)
         {
             this.buffer = SoundBuffer.FromFile(stream);
@@ -31,6 +35,10 @@ namespace Cireon.Audio
             this.GenerateSource().Play();
         }
 
+        /// <summary>
+        /// Generates an audio source, fills its buffers and sets its properties to the default values.
+        /// </summary>
+        /// <returns>The source filled with the right buffers with the default properties set.</returns>
         public Source GenerateSource()
         {
             var source = AudioManager.Instance.SourceManager.RequestSource();

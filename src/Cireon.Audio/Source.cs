@@ -1,17 +1,21 @@
-﻿using OpenTK.Audio.OpenAL;
+﻿using System;
+using OpenTK.Audio.OpenAL;
 
 namespace Cireon.Audio
 {
     /// <summary>
     /// Wrapper class for OpenAL Sources.
     /// </summary>
-    public sealed class Source
+    public sealed class Source : IDisposable
     {
         /// <summary>
         /// OpenAL source handle.
         /// </summary>
         public readonly int Handle;
 
+        /// <summary>
+        /// True if the source is disposed and thus no longer available.
+        /// </summary>
         public bool Disposed { get; private set; }
 
         /// <summary>
@@ -78,7 +82,9 @@ namespace Cireon.Audio
         }
 
         private float pitch;
-
+        /// <summary>
+        /// The pitch at which the source plays its buffers.
+        /// </summary>
         public float Pitch
         {
             get { return this.pitch; }
@@ -90,15 +96,21 @@ namespace Cireon.Audio
         }
 
         /// <summary>
-        /// 
+        /// Creates a new OpenAL source.
         /// </summary>
         public Source()
         {
             this.Handle = AL.GenSource();
             ALHelper.Check();
+
+            this.volume = 1;
             this.pitch = 1;
         }
 
+        /// <summary>
+        /// Adds a new sound buffer to be played by this source.
+        /// </summary>
+        /// <param name="buffer"></param>
         public void QueueBuffer(SoundBuffer buffer)
         {
             this.QueueBuffers(buffer.Handles.Length, buffer.Handles);
@@ -134,6 +146,11 @@ namespace Cireon.Audio
             ALHelper.Check();
         }
 
+        /// <summary>
+        /// Removes the specified buffers from the source queue.
+        /// </summary>
+        /// <param name="bufferIDs"></param>
+        [Obsolete]
         public void UnqueueBuffers(int[] bufferIDs)
         {
             AL.SourceUnqueueBuffers(this.Handle, this.QueuedBuffers, bufferIDs);
@@ -143,7 +160,7 @@ namespace Cireon.Audio
         /// <summary>
         /// Removes all the processed buffers from the source.
         /// </summary>
-        /// <returns>An integer of buffer handles that are removed.</returns>
+        /// <returns>An integer array of buffer handles that are removed.</returns>
         public int[] UnqueueProcessedBuffers()
         {
             var unqueued = AL.SourceUnqueueBuffers(this.Handle, this.ProcessedBuffers);

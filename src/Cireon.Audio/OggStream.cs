@@ -8,42 +8,77 @@ using OpenTK.Audio.OpenAL;
 
 namespace Cireon.Audio
 {
+    /// <summary>
+    /// An object representing an ogg-filestream.
+    /// </summary>
     public class OggStream : IDisposable
     {
-        private const int DefaultBufferCount = 3;
+        private const int defaultBufferCount = 3;
 
         internal readonly object StopMutex = new object();
         internal readonly object PrepareMutex = new object();
 
+        /// <summary>
+        /// The source that is used to play the contents from this filestream.
+        /// </summary>
         public readonly Source Source;
         internal readonly SoundBuffer Buffer;
 
         private readonly Stream underlyingStream;
 
         internal VorbisReader Reader;
+        /// <summary>
+        /// Whether this stream is ready to start playing.
+        /// </summary>
         public bool Ready { get; private set; }
         internal bool Preparing { get; private set; }
 
+        /// <summary>
+        /// The amount of buffers currently queued.
+        /// </summary>
         public int BufferCount { get; private set; }
 
+        /// <summary>
+        /// An event that gets fired when the stream finished playing.
+        /// </summary>
         public EventHandler Finished;
 
+        /// <summary>
+        /// The volume of this oggstream.
+        /// </summary>
         public float Volume
         {
             get { return this.Source.Volume; }
             set { this.Source.Volume = value; }
         }
 
+        /// <summary>
+        /// The pitch of this oggstream.
+        /// </summary>
         public float Pitch
         {
             get { return this.Source.Pitch; }
             set { this.Source.Pitch = value; }
         }
 
+        /// <summary>
+        /// Whether this stream plays the file repeatedly.
+        /// </summary>
         public bool IsLooped { get; set; }
 
-        public OggStream(string filename, int bufferCount = DefaultBufferCount) : this(File.OpenRead(filename), bufferCount) { }
-        public OggStream(Stream stream, int bufferCount = DefaultBufferCount)
+        /// <summary>
+        /// Creates a new ogg-filestream.
+        /// </summary>
+        /// <param name="filename">The ogg-file.</param>
+        /// <param name="bufferCount">The amount of buffers to use.</param>
+        public OggStream(string filename, int bufferCount = defaultBufferCount) : this(File.OpenRead(filename), bufferCount) { }
+
+        /// <summary>
+        /// Creates a new ogg-filestream.
+        /// </summary>
+        /// <param name="stream">The ogg-filestream.</param>
+        /// <param name="bufferCount">The amount of buffers to use.</param>
+        public OggStream(Stream stream, int bufferCount = defaultBufferCount)
         {
             this.BufferCount = bufferCount;
 
@@ -57,10 +92,14 @@ namespace Cireon.Audio
             //}
 
             this.Volume = 1;
+            this.Pitch = 1;
 
             this.underlyingStream = stream;
         }
 
+        /// <summary>
+        /// Prepares this stream for playing by filling the first buffers.
+        /// </summary>
         public void Prepare()
         {
             if (this.Preparing) return;
@@ -85,17 +124,19 @@ namespace Cireon.Audio
                         break;
                 }
 
-                if (!this.Ready)
+                if (this.Ready) return;
+
+                lock (this.PrepareMutex)
                 {
-                    lock (this.PrepareMutex)
-                    {
-                        this.Preparing = true;
-                        this.Open(true);
-                    }
+                    this.Preparing = true;
+                    this.open(true);
                 }
             }
         }
 
+        /// <summary>
+        /// Starts playing this stream.
+        /// </summary>
         public void Play()
         {
             var state = this.Source.State;
@@ -117,6 +158,9 @@ namespace Cireon.Audio
             OggStreamer.Instance.AddStream(this);
         }
 
+        /// <summary>
+        /// Pauses playing this stream.
+        /// </summary>
         public void Pause()
         {
             if (this.Source.State != ALSourceState.Playing)
@@ -126,6 +170,9 @@ namespace Cireon.Audio
             this.Source.Pause();
         }
 
+        /// <summary>
+        /// Resumes playing this stream after it is paused.
+        /// </summary>
         public void Resume()
         {
             if (this.Source.State != ALSourceState.Paused)
@@ -135,6 +182,9 @@ namespace Cireon.Audio
             this.Source.Play();
         }
 
+        /// <summary>
+        /// Stops playing this stream.
+        /// </summary>
         public void Stop()
         {
             var state = this.Source.State;
@@ -150,6 +200,9 @@ namespace Cireon.Audio
             }
         }
 
+        /// <summary>
+        /// Disposes this stream.
+        /// </summary>
         public void Dispose()
         {
             var state = this.Source.State;
@@ -163,7 +216,7 @@ namespace Cireon.Audio
                 if (state != ALSourceState.Initial)
                     this.empty();
 
-                this.Close();
+                this.close();
 
                 this.underlyingStream.Dispose();
             }
@@ -179,6 +232,9 @@ namespace Cireon.Audio
             this.Source.Stop();
         }
 
+        /// <summary>
+        /// Call the Finished event.
+        /// </summary>
         public void NotifyFinished()
         {
             var callback = this.Finished;
@@ -192,28 +248,27 @@ namespace Cireon.Audio
         private void empty()
         {
             int queued = this.Source.QueuedBuffers;
-            if (queued > 0)
+            if (queued <= 0) return;
+
+            try
             {
-                try
-                {
-                    this.Source.UnqueueBuffers();
-                }
-                catch (InvalidOperationException)
-                {
-                    // This is a bug in the OpenAL implementation
-                    // Salvage what we can
-                    if (this.Source.ProcessedBuffers > 0)
-                        this.Source.UnqueueProcessedBuffers();
+                this.Source.UnqueueBuffers();
+            }
+            catch (InvalidOperationException)
+            {
+                // This is a bug in the OpenAL implementation
+                // Salvage what we can
+                if (this.Source.ProcessedBuffers > 0)
+                    this.Source.UnqueueProcessedBuffers();
 
-                    // Try turning it off again?
-                    this.Source.Stop();
+                // Try turning it off again?
+                this.Source.Stop();
 
-                    this.empty();
-                }
+                this.empty();
             }
         }
 
-        internal void Open(bool precache = false)
+        private void open(bool precache = false)
         {
             this.underlyingStream.Seek(0, SeekOrigin.Begin);
             this.Reader = new VorbisReader(this.underlyingStream, false);
@@ -231,7 +286,7 @@ namespace Cireon.Audio
             this.Ready = true;
         }
 
-        internal void Close()
+        private void close()
         {
             if (this.Reader != null)
             {
@@ -242,10 +297,13 @@ namespace Cireon.Audio
         }
     }
 
+    /// <summary>
+    /// The manager that performs all the actual streaming.
+    /// </summary>
     public class OggStreamer : IDisposable
     {
-        private const float DefaultUpdateRate = 10;
-        private const int DefaultBufferSize = 44100;
+        private const float defaultUpdateRate = 10;
+        private const int defaultBufferSize = 44100;
 
         private static readonly object singletonMutex = new object();
 
@@ -261,10 +319,19 @@ namespace Cireon.Audio
         private Thread underlyingThread;
         private volatile bool cancelled;
 
+        /// <summary>
+        /// The amount of times per second the streamer checks all the streams.
+        /// </summary>
         public float UpdateRate { get; private set; }
+        /// <summary>
+        /// The buffer size.
+        /// </summary>
         public int BufferSize { get; private set; }
 
         private static OggStreamer instance;
+        /// <summary>
+        /// The singleton instance of the OggStreamer.
+        /// </summary>
         public static OggStreamer Instance
         {
             get { lock (OggStreamer.singletonMutex) return OggStreamer.instance; }
@@ -276,8 +343,8 @@ namespace Cireon.Audio
         /// <param name="bufferSize">Buffer size</param>
         /// <param name="updateRate">Number of times per second to update</param>
         /// <param name="internalThread">True to use an internal thread, false to use your own thread, in which case use must call EnsureBuffersFilled periodically</param>
-        public static void Initialize(int bufferSize = OggStreamer.DefaultBufferSize,
-            float updateRate = OggStreamer.DefaultUpdateRate, bool internalThread = true)
+        public static void Initialize(int bufferSize = OggStreamer.defaultBufferSize,
+            float updateRate = OggStreamer.defaultUpdateRate, bool internalThread = true)
         {
             lock (OggStreamer.singletonMutex)
             {
@@ -285,6 +352,9 @@ namespace Cireon.Audio
             }
         }
 
+        /// <summary>
+        /// Dispose the singleton instance.
+        /// </summary>
         public static void DisposeInstance()
         {
             OggStreamer.instance.Dispose();
@@ -295,7 +365,7 @@ namespace Cireon.Audio
         {
             if (internalThread)
             {
-                this.underlyingThread = new Thread(this.EnsureBuffersFilled) { Priority = ThreadPriority.Lowest };
+                this.underlyingThread = new Thread(this.ensureBuffersFilled) { Priority = ThreadPriority.Lowest };
                 this.underlyingThread.Start();
             }
             else
@@ -311,6 +381,9 @@ namespace Cireon.Audio
             this.castBuffer = new short[bufferSize];
         }
 
+        /// <summary>
+        /// Disposes the oggstreamer instance.
+        /// </summary>
         public void Dispose()
         {
             lock (OggStreamer.singletonMutex)
@@ -322,17 +395,34 @@ namespace Cireon.Audio
             }
         }
 
+        /// <summary>
+        /// Adds a new stream to be manager by the streamer.
+        /// </summary>
+        /// <param name="stream">The new stream to be managed.</param>
+        /// <returns>Whether the stream was added succesfully.</returns>
         public bool AddStream(OggStream stream)
         {
             lock (this.iterationMutex)
                 return this.streams.Add(stream);
         }
+
+        /// <summary>
+        /// Removes a stream from the manager.
+        /// </summary>
+        /// <param name="stream">The stream to be removed.</param>
+        /// <returns>Whether the stream was removed succesfully.</returns>
         public bool RemoveStream(OggStream stream)
         {
             lock (this.iterationMutex)
                 return this.streams.Remove(stream);
         }
 
+        /// <summary>
+        /// Fills the buffers of the specified stream.
+        /// </summary>
+        /// <param name="stream">The stream.</param>
+        /// <param name="bufferId">The id of the buffer to be filled.</param>
+        /// <returns></returns>
         public bool FillBuffer(OggStream stream, int bufferId)
         {
             int readSamples;
@@ -348,7 +438,10 @@ namespace Cireon.Audio
             return readSamples != this.BufferSize;
         }
 
-        public void EnsureBuffersFilled()
+        /// <summary>
+        /// Ensures that all the buffers of all streams are properly filled.
+        /// </summary>
+        private void ensureBuffersFilled()
         {
             do
             {
@@ -385,23 +478,21 @@ namespace Cireon.Audio
                         {
                             finished |= this.FillBuffer(stream, tempBuffers[bufIdx]);
 
-                            if (finished)
+                            if (!finished) continue;
+
+                            if (stream.IsLooped)
                             {
-                                if (stream.IsLooped)
+                                stream.Reader.DecodedTime = TimeSpan.Zero;
+                                if (bufIdx == 0)
                                 {
-                                    stream.Reader.DecodedTime = TimeSpan.Zero;
-                                    if (bufIdx == 0)
-                                    {
-                                        // we didn't have any buffers left over, so let's start from the beginning on the next cycle...
-                                        continue;
-                                    }
+                                    // we didn't have any buffers left over, so let's start from the beginning on the next cycle...
                                 }
-                                else
-                                {
-                                    lock (stream.StopMutex) stream.NotifyFinished();
-                                    this.streams.Remove(stream);
-                                    break;
-                                }
+                            }
+                            else
+                            {
+                                lock (stream.StopMutex) stream.NotifyFinished();
+                                this.streams.Remove(stream);
+                                break;
                             }
                         }
 

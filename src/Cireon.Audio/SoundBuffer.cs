@@ -6,25 +6,50 @@ using OpenTK.Audio.OpenAL;
 
 namespace Cireon.Audio
 {
-    public class SoundBuffer
+    /// <summary>
+    /// A wrapper class for a set of audiobuffers.
+    /// </summary>
+    public class SoundBuffer : IDisposable
     {
+        /// <summary>
+        /// Disposal state of this buffer.
+        /// </summary>
+        public bool Disposed { get; private set; }
+
         /// <summary>
         /// List of OpenAL buffer handles.
         /// </summary>
         public readonly int[] Handles;
 
+        /// <summary>
+        /// Generates a new sound buffer of the given size.
+        /// </summary>
+        /// <param name="amount">The amount of buffers to reserve.</param>
         public SoundBuffer(int amount)
         {
             this.Handles = AL.GenBuffers(amount);
             ALHelper.Check();
         }
 
+        /// <summary>
+        /// Generates a news sound buffer and fills it.
+        /// </summary>
+        /// <param name="buffers">The content of the buffers.</param>
+        /// <param name="format">The format the buffers are in.</param>
+        /// <param name="sampleRate">The samplerate of the buffers.</param>
         public SoundBuffer(IList<short[]> buffers, ALFormat format, int sampleRate)
             : this(buffers.Count)
         {
             this.FillBuffer(buffers, format, sampleRate);
         }
 
+        /// <summary>
+        /// Fills the buffer with new data.
+        /// </summary>
+        /// <param name="index">The starting index from where to fill the buffer.</param>
+        /// <param name="data">The new content of the buffers.</param>
+        /// <param name="format">The format the buffers are in.</param>
+        /// <param name="sampleRate">The samplerate of the buffers.</param>
         public void FillBuffer(int index, short[] data, ALFormat format, int sampleRate)
         {
             if (index < 0 || index >= this.Handles.Length)
@@ -34,11 +59,24 @@ namespace Cireon.Audio
             ALHelper.Check();
         }
 
+        /// <summary>
+        /// Fills the buffer with new data.
+        /// </summary>
+        /// <param name="data">The new content of the buffers.</param>
+        /// <param name="format">The format the buffers are in.</param>
+        /// <param name="sampleRate">The samplerate of the buffers.</param>
         public void FillBuffer(IList<short[]> data, ALFormat format, int sampleRate)
         {
             this.FillBuffer(0, data, format, sampleRate);
         }
 
+        /// <summary>
+        /// Fills the buffer with new data.
+        /// </summary>
+        /// <param name="index">The starting index from where to fill the buffer.</param>
+        /// <param name="data">The new content of the buffers.</param>
+        /// <param name="format">The format the buffers are in.</param>
+        /// <param name="sampleRate">The samplerate of the buffers.</param>
         public void FillBuffer(int index, IList<short[]> data, ALFormat format, int sampleRate)
         {
             if (index < 0 || index >= this.Handles.Length)
@@ -50,17 +88,35 @@ namespace Cireon.Audio
                 this.FillBuffer((index + i) % this.Handles.Length, data[i], format, sampleRate);
         }
 
+        /// <summary>
+        /// Disposes the buffer.
+        /// </summary>
         public void Dispose()
         {
+            if (this.Disposed)
+                return;
+
             AL.DeleteBuffers(this.Handles);
             ALHelper.Check();
+
+            this.Disposed = true;
         }
 
+        /// <summary>
+        /// Creates a new soundbuffer from a file.
+        /// </summary>
+        /// <param name="file">The file to load the data from.</param>
+        /// <returns>A SoundBuffer object containing the data from the specified file.</returns>
         public static SoundBuffer FromFile(string file)
         {
             return SoundBuffer.FromFile(File.OpenRead(file));
         }
 
+        /// <summary>
+        /// Creates a new soundbuffer from a file.
+        /// </summary>
+        /// <param name="file">The file to load the data from.</param>
+        /// <returns>A SoundBuffer object containing the data from the specified file.</returns>
         public static SoundBuffer FromFile(Stream file)
         {
             var buffers = new List<short[]>();
