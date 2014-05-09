@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net.NetworkInformation;
 using OpenTK.Audio;
 
 namespace Cireon.Audio
@@ -8,43 +7,49 @@ namespace Cireon.Audio
     /// Main audio manager.
     /// Keeps track of several sub-managers and provides global access to audio-related objects.
     /// </summary>
-    public sealed class AudioManager
+    public sealed class AudioManager : IDisposable
     {
+        private static AudioManager instance;
+
         /// <summary>
         /// Singleton instance.
         /// </summary>
-        public static AudioManager Instance { get; private set; }
+        public static AudioManager Instance
+        {
+            get
+            {
+                if (AudioManager.instance == null)
+                    throw new Exception("You have to initialise the audio manager before accessing it.");
+                return AudioManager.instance;
+            }
+        }
 
         /// <summary>
         /// Initializes the singleton instance.
         /// </summary>
         public static void Initialize()
         {
-            AudioManager.Instance = new AudioManager();
+            AudioManager.instance = new AudioManager();
         }
 
-        /// <summary>
-        /// Disposes the singleton instance.
-        /// Includes clearing all buffers and releasing all OpenAL resources.
-        /// </summary>
-        public static void Dispose()
-        {
-            AudioManager.Instance.dispose();
-        }
+        private bool disposed;
+
+        private readonly AudioContext context;
+        private readonly SourceManager sourceManager;
+
+        private IBackgroundMusic currentBGM;
+        private float masterVolume, musicVolume, effectsVolume, pitch;
 
         /// <summary>
         /// The manager that keeps track of all OpenAL Sources.
         /// </summary>
-        public readonly SourceManager SourceManager;
-
-        private readonly AudioContext context;
-
-        private IBackgroundMusic currentBGM;
-
-        private float masterVolume, musicVolume, effectsVolume;
+        public SourceManager SourceManager
+        {
+            get { return this.sourceManager; }
+        }
 
         /// <summary>
-        /// The master volume that is applied to both the music and soundeffects.
+        /// The (default) master volume that is applied to both the music and soundeffects.
         /// </summary>
         public float MasterVolume
         {
@@ -60,7 +65,7 @@ namespace Cireon.Audio
             }
         }
         /// <summary>
-        /// The volume that is used for playing the music.
+        /// The default volume that is used for playing the music.
         /// </summary>
         public float MusicVolume
         {
@@ -75,7 +80,7 @@ namespace Cireon.Audio
             }
         }
         /// <summary>
-        /// The volume that is used for playing the sound effects.
+        /// The default volume that is used for playing the sound effects.
         /// </summary>
         public float EffectsVolume
         {
@@ -90,8 +95,9 @@ namespace Cireon.Audio
             }
         }
 
-        private float pitch = 1;
-
+        /// <summary>
+        /// The default pitch audio is played with.
+        /// </summary>
         public float Pitch
         {
             get { return this.pitch; }
@@ -110,11 +116,12 @@ namespace Cireon.Audio
             this.context = new AudioContext();
             OggStreamer.Initialize();
 
-            this.SourceManager = new SourceManager();
+            this.sourceManager = new SourceManager();
 
             this.masterVolume = 1;
             this.musicVolume = 1;
             this.effectsVolume = 1;
+            this.pitch = 1;
         }
 
         /// <summary>
@@ -194,11 +201,15 @@ namespace Cireon.Audio
             throw new NotImplementedException();
         }
 
-        private void dispose()
+        public void Dispose()
         {
-            this.SourceManager.Dispose();
+            if (this.disposed)
+                return;
+
+            this.sourceManager.Dispose();
             OggStreamer.DisposeInstance();
             this.context.Dispose();
+            this.disposed = true;
         }
     }
 }
