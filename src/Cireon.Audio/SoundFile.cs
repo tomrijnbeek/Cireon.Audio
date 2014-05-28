@@ -43,7 +43,7 @@ namespace Cireon.Audio
         {
             var source = AudioManager.Instance.SourceManager.RequestSource();
             source.QueueBuffer(this.buffer);
-            source.Volume = AudioManager.Instance.EffectsVolume;
+            source.Volume = AudioManager.Instance.MasterVolume * AudioManager.Instance.EffectsVolume;
             source.Pitch = AudioManager.Instance.Pitch;
             return source;
         }
