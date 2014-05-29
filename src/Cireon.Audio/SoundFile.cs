@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Cireon.Audio
 {
@@ -13,6 +14,7 @@ namespace Cireon.Audio
         /// Loads a new soundfile from a file.
         /// </summary>
         /// <param name="file">The filename of the ogg-file that contains the sound effect.</param>
+        [Obsolete("Please use the static FromOgg method instead of the constructor.")]
         public SoundFile(string file)
         {
             this.buffer = SoundBuffer.FromFile(file);
@@ -22,9 +24,15 @@ namespace Cireon.Audio
         /// Loads a new soundfile from a file.
         /// </summary>
         /// <param name="stream">The filestream containing the sound effect in ogg-format.</param>
+        [Obsolete("Please use the static FromOgg method instead of the constructor.")]
         public SoundFile(Stream stream)
         {
             this.buffer = SoundBuffer.FromFile(stream);
+        }
+
+        private SoundFile(SoundBuffer buffer)
+        {
+            this.buffer = buffer;
         }
 
         /// <summary>
@@ -47,5 +55,25 @@ namespace Cireon.Audio
             source.Pitch = AudioManager.Instance.Pitch;
             return source;
         }
+
+        #region Static methods
+        /// <summary>
+        /// Loads a new soundfile from an ogg-file.
+        /// </summary>
+        /// <param name="file">The filename of the ogg-file that contains the sound effect.</param>
+        public static SoundFile FromOgg(string file)
+        {
+            return new SoundFile(SoundBuffer.FromOgg(file));
+        }
+
+        /// <summary>
+        /// Loads a new soundfile from an ogg-file.
+        /// </summary>
+        /// <param name="stream">The filestream containing the sound effect in ogg-format.</param>
+        public static SoundFile FromOgg(Stream stream)
+        {
+            return new SoundFile(SoundBuffer.FromOgg(stream));
+        }
+        #endregion
     }
 }
