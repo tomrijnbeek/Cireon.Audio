@@ -161,7 +161,7 @@ namespace Cireon.Audio
                     // Samples are interleaved (chan0, chan1, chan0, chan1, etc.)
 
                     // Use the OggStreamer method to cast to the right format
-                    var castBuffer = new short[16384];
+                    var castBuffer = new short[count];
                     SoundBuffer.CastBuffer(buffer, castBuffer, count);
                     buffers.Add(castBuffer);
                 }
