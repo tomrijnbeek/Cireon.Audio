@@ -64,7 +64,7 @@ namespace Cireon.Audio
         /// </summary>
         public bool FinishedPlaying
         {
-            get { return this.ProcessedBuffers >= this.QueuedBuffers; }
+            get { return this.ProcessedBuffers >= this.QueuedBuffers && !this.Repeating; }
         }
 
         private float volume;
@@ -91,6 +91,20 @@ namespace Cireon.Audio
             set
             {
                 AL.Source(this.Handle, ALSourcef.Pitch, this.pitch = value);
+                ALHelper.Check();
+            }
+        }
+
+        private bool repeating;
+        /// <summary>
+        /// Whether the source should repeat itself or not.
+        /// </summary>
+        public bool Repeating
+        {
+            get { return this.repeating; }
+            set
+            {
+                AL.Source(this.Handle, ALSourceb.Looping, this.repeating = value);
                 ALHelper.Check();
             }
         }
