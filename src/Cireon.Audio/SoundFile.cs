@@ -74,6 +74,24 @@ namespace Cireon.Audio
         {
             return new SoundFile(SoundBuffer.FromOgg(stream));
         }
+
+        /// <summary>
+        /// Loads a new soundfile from an uncompressed wave-file.
+        /// </summary>
+        /// <param name="file">The filename of the uncompressed wave-file that contains the sound effect.</param>
+        public static SoundFile FromWav(string file)
+        {
+            return new SoundFile(SoundBuffer.FromWav(file));
+        }
+
+        /// <summary>
+        /// Loads a new soundfile from an uncompressed wave-file.
+        /// </summary>
+        /// <param name="stream">The filestream containing the sound effect in wave-format.</param>
+        public static SoundFile FromWav(Stream stream)
+        {
+            return new SoundFile(SoundBuffer.FromWav(stream));
+        }
         #endregion
     }
 }
