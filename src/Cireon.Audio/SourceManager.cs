@@ -30,7 +30,8 @@ namespace Cireon.Audio
 
             foreach (var s in this.sources.Where(s => s.Disposed || s.FinishedPlaying))
             {
-                s.Dispose();
+                if (!s.Disposed)
+                    s.Dispose();
                 finishedSources.Add(s);
             }
 
