@@ -28,7 +28,7 @@ namespace Cireon.Audio
         {
             var finishedSources = new List<Source>(this.sources.Count);
 
-            foreach (var s in this.sources.Where(s => s.FinishedPlaying))
+            foreach (var s in this.sources.Where(s => s.Disposed || s.FinishedPlaying))
             {
                 s.Dispose();
                 finishedSources.Add(s);
