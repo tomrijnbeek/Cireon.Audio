@@ -187,10 +187,13 @@ namespace Cireon.Audio
         /// </summary>
         public void Stop()
         {
-            var state = this.Source.State;
-            if (state == ALSourceState.Playing || state == ALSourceState.Paused)
+            if (!this.Source.Disposed)
             {
-                this.stopPlayback();
+                var state = this.Source.State;
+                if (state == ALSourceState.Playing || state == ALSourceState.Paused)
+                {
+                    this.stopPlayback();
+                }
             }
 
             lock (this.StopMutex)
