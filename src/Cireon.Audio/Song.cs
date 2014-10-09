@@ -110,8 +110,11 @@ namespace Cireon.Audio
                 return;
 
             this.finished = true;
-            this.stream.Dispose();
-            this.stream = null;
+            lock (this.streamDisposeMutex)
+            {
+                this.stream.Dispose();
+                this.stream = null;
+            }
 
             if (this.prepareBuffer)
                 this.initialiseStream();
@@ -124,9 +127,12 @@ namespace Cireon.Audio
         {
             this.finished = false;
 
-            if (this.stream == null)
-                this.initialiseStream();
-            this.stream.Play();
+            lock (this.streamDisposeMutex)
+            {
+                if (this.stream == null)
+                    this.initialiseStream();
+                this.stream.Play();
+            }
         }
 
         /// <summary>
@@ -134,8 +140,9 @@ namespace Cireon.Audio
         /// </summary>
         public void Pause()
         {
-            if (this.stream != null)
-                this.stream.Pause();
+            lock (this.streamDisposeMutex)
+                if (this.stream != null)
+                    this.stream.Pause();
         }
 
         /// <summary>
@@ -153,8 +160,9 @@ namespace Cireon.Audio
         /// </summary>
         public void Prepare()
         {
-            if (this.stream != null)
-                this.initialiseStream();
+            lock (this.streamDisposeMutex)
+                if (this.stream != null)
+                    this.initialiseStream();
         }
 
         /// <summary>
