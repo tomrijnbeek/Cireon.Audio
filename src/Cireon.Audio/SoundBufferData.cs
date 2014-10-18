@@ -101,7 +101,7 @@ namespace Cireon.Audio
                 if (signature != "RIFF")
                     throw new NotSupportedException("Specified stream is not a wave file.");
 
-                int riffChunckSize = reader.ReadInt32();
+                reader.ReadInt32(); // riffChunkSize
 
                 var format = new string(reader.ReadChars(4));
                 if (format != "WAVE")
@@ -113,11 +113,11 @@ namespace Cireon.Audio
                     throw new NotSupportedException("Specified wave file is not supported.");
 
                 int formatChunkSize = reader.ReadInt32();
-                int audioFormat = reader.ReadInt16();
+                reader.ReadInt16(); // audioFormat
                 int numChannels = reader.ReadInt16();
                 int sampleRate = reader.ReadInt32();
-                int byteRate = reader.ReadInt32();
-                int blockAlign = reader.ReadInt16();
+                reader.ReadInt32(); // byteRate
+                reader.ReadInt16(); // blockAlign
                 int bitsPerSample = reader.ReadInt16();
 
                 if (formatChunkSize > 16)
@@ -128,7 +128,7 @@ namespace Cireon.Audio
                 if (dataSignature != "data")
                     throw new NotSupportedException("Only uncompressed wave files are supported.");
 
-                int dataChunkSize = reader.ReadInt32();
+                reader.ReadInt32(); // dataChunkSize
 
                 var alFormat = SoundBufferData.getSoundFormat(numChannels, bitsPerSample);
 
