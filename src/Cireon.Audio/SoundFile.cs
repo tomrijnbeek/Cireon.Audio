@@ -10,26 +10,6 @@ namespace Cireon.Audio
     {
         private readonly SoundBuffer buffer;
 
-        /// <summary>
-        /// Loads a new soundfile from a file.
-        /// </summary>
-        /// <param name="file">The filename of the ogg-file that contains the sound effect.</param>
-        [Obsolete("Please use the static FromOgg method instead of the constructor.")]
-        public SoundFile(string file)
-        {
-            this.buffer = SoundBuffer.FromFile(file);
-        }
-
-        /// <summary>
-        /// Loads a new soundfile from a file.
-        /// </summary>
-        /// <param name="stream">The filestream containing the sound effect in ogg-format.</param>
-        [Obsolete("Please use the static FromOgg method instead of the constructor.")]
-        public SoundFile(Stream stream)
-        {
-            this.buffer = SoundBuffer.FromFile(stream);
-        }
-
         private SoundFile(SoundBuffer buffer)
         {
             this.buffer = buffer;

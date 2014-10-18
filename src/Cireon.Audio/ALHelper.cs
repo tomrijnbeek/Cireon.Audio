@@ -24,7 +24,7 @@ namespace Cireon.Audio
         /// Calls a function and then checks for an OpenAL error.
         /// </summary>
         /// <param name="function">The function to be called.</param>
-        public static void Call(this Action function)
+        public static void Call(Action function)
         {
             function();
             ALHelper.Check();
@@ -36,7 +36,7 @@ namespace Cireon.Audio
         /// <typeparam name="TParameter">The type of the parameter of the function.</typeparam>
         /// <param name="function">The function to be called.</param>
         /// <param name="parameter">The parameter to be passed to the function.</param>
-        public static void Call<TParameter>(this Action<TParameter> function, TParameter parameter)
+        public static void Call<TParameter>(Action<TParameter> function, TParameter parameter)
         {
             function(parameter);
             ALHelper.Check();
@@ -47,7 +47,7 @@ namespace Cireon.Audio
         /// </summary>
         /// <param name="function">The function to be evaluated.</param>
         /// <typeparam name="TReturn">The type of the return value.</typeparam>
-        public static TReturn Eval<TReturn>(this Func<TReturn> function)
+        public static TReturn Eval<TReturn>(Func<TReturn> function)
         {
             var val = function();
             ALHelper.Check();
@@ -61,7 +61,7 @@ namespace Cireon.Audio
         /// <param name="parameter">The type of the parameter of the function.</param>
         /// <typeparam name="TParameter">The type of the parameter of the function.</typeparam>
         /// <typeparam name="TReturn">The type of the return value.</typeparam>
-        public static TReturn Eval<TParameter, TReturn>(this Func<TParameter, TReturn> function, TParameter parameter)
+        public static TReturn Eval<TParameter, TReturn>(Func<TParameter, TReturn> function, TParameter parameter)
         {
             var val = function(parameter);
             ALHelper.Check();
