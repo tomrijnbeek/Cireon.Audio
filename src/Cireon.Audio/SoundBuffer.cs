@@ -28,7 +28,7 @@ namespace Cireon.Audio
         /// <param name="amount">The amount of buffers to reserve.</param>
         public SoundBuffer(int amount)
         {
-            ALHelper.Eval(AL.GenBuffers, amount);
+            this.Handles = ALHelper.Eval(AL.GenBuffers, amount);
         }
 
         /// <summary>
