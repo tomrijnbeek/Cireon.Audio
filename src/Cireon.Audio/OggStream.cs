@@ -432,7 +432,7 @@ namespace Cireon.Audio
             lock (this.readMutex)
             {
                 readSamples = stream.Reader.ReadSamples(this.readSampleBuffer, 0, this.BufferSize);
-                SoundBuffer.CastBuffer(this.readSampleBuffer, this.castBuffer, readSamples);
+                SoundBufferData.CastBuffer(this.readSampleBuffer, this.castBuffer, readSamples);
             }
             AL.BufferData(bufferId, stream.Reader.Channels == 1 ? ALFormat.Mono16 : ALFormat.Stereo16, this.castBuffer,
                           readSamples * sizeof(short), stream.Reader.SampleRate);

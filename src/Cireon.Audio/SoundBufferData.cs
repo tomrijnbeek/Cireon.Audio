@@ -32,7 +32,17 @@ namespace Cireon.Audio
 
         #region Static creation functions
         /// <summary>
-        /// Extract the bifferdata from an ogg-file.
+        /// Extract the bufferdata from an ogg-file.
+        /// </summary>
+        /// <param name="file">The file to load the data from.</param>
+        /// <returns>A SoundBufferData object containing the data from the specified file.</returns>
+        public static SoundBufferData FromOgg(string file)
+        {
+            return SoundBufferData.FromOgg(File.OpenRead(file));
+        }
+
+        /// <summary>
+        /// Extract the bufferdata from an ogg-file.
         /// </summary>
         /// <param name="file">The file to load the data from.</param>
         /// <returns>A SoundBufferData object containing the data from the specified file.</returns>
@@ -65,6 +75,16 @@ namespace Cireon.Audio
             }
 
             return new SoundBufferData(buffers, format, sampleRate);
+        }
+
+        /// <summary>
+        /// Extracts the bufferdata from an uncompressed wave-file.
+        /// </summary>
+        /// <param name="file">The file to load the data from.</param>
+        /// <returns>A SoundBufferData object containing the data from the specified file.</returns>
+        public static SoundBufferData FromWav(string file)
+        {
+            return SoundBufferData.FromWav(File.OpenRead(file));
         }
 
         /// <summary>

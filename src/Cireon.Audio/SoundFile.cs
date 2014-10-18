@@ -10,9 +10,9 @@ namespace Cireon.Audio
     {
         private readonly SoundBuffer buffer;
 
-        private SoundFile(SoundBuffer buffer)
+        private SoundFile(SoundBufferData bufferData)
         {
-            this.buffer = buffer;
+            this.buffer = SoundBuffer.FromData(bufferData);
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace Cireon.Audio
         /// <param name="file">The filename of the ogg-file that contains the sound effect.</param>
         public static SoundFile FromOgg(string file)
         {
-            return new SoundFile(SoundBuffer.FromOgg(file));
+            return new SoundFile(SoundBufferData.FromOgg(file));
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace Cireon.Audio
         /// <param name="stream">The filestream containing the sound effect in ogg-format.</param>
         public static SoundFile FromOgg(Stream stream)
         {
-            return new SoundFile(SoundBuffer.FromOgg(stream));
+            return new SoundFile(SoundBufferData.FromOgg(stream));
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace Cireon.Audio
         /// <param name="file">The filename of the uncompressed wave-file that contains the sound effect.</param>
         public static SoundFile FromWav(string file)
         {
-            return new SoundFile(SoundBuffer.FromWav(file));
+            return new SoundFile(SoundBufferData.FromWav(file));
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace Cireon.Audio
         /// <param name="stream">The filestream containing the sound effect in wave-format.</param>
         public static SoundFile FromWav(Stream stream)
         {
-            return new SoundFile(SoundBuffer.FromWav(stream));
+            return new SoundFile(SoundBufferData.FromWav(stream));
         }
         #endregion
     }

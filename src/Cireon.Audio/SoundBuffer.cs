@@ -43,9 +43,6 @@ namespace Cireon.Audio
             this.FillBuffer(buffers, format, sampleRate);
         }
 
-        internal SoundBuffer(SoundBufferData bufferData)
-            : this(bufferData.Buffers, bufferData.Format, bufferData.SampleRate) { }
-
         /// <summary>
         /// Fills the buffer with new data.
         /// </summary>
@@ -104,12 +101,20 @@ namespace Cireon.Audio
         }
 
         /// <summary>
+        /// Creates a new soundbuffer from preloaded sound data.
+        /// </summary>
+        /// <returns>A SoundBuffer object containing the specified sound data.</returns>
+        /// <param name="data">The preloaded sound data.</param>
+        public static SoundBuffer FromData(SoundBufferData data)
+        {
+            return new SoundBuffer(data.Buffers, data.Format, data.SampleRate);
+        }
+
+        /// <summary>
         /// Creates a new soundbuffer from an ogg-file.
         /// </summary>
         /// <param name="file">The file to load the data from.</param>
         /// <returns>A SoundBuffer object containing the data from the specified file.</returns>
-        [Obsolete("This method is obsolete. Please use SoundBufferData.FromOgg() instead." +
-            "It is not recommended to create sound buffers for every loaded file.")]
         public static SoundBuffer FromOgg(string file)
         {
             return SoundBuffer.FromOgg(File.OpenRead(file));
@@ -120,11 +125,9 @@ namespace Cireon.Audio
         /// </summary>
         /// <param name="file">The file to load the data from.</param>
         /// <returns>A SoundBuffer object containing the data from the specified file.</returns>
-        [Obsolete("This method is obsolete. Please use SoundBufferData.FromOgg() instead." +
-            "It is not recommended to create sound buffers for every loaded file.")]
         public static SoundBuffer FromOgg(Stream file)
         {
-            return new SoundBuffer(SoundBufferData.FromOgg(file));
+            return SoundBuffer.FromData(SoundBufferData.FromOgg(file));
         }
 
         /// <summary>
@@ -132,8 +135,6 @@ namespace Cireon.Audio
         /// </summary>
         /// <param name="file">The file to load the data from.</param>
         /// <returns>A SoundBuffer object containing the data from the specified file.</returns>
-        [Obsolete("This method is obsolete. Please use SoundBufferData.FromWav() instead." +
-            "It is not recommended to create sound buffers for every loaded file.")]
         public static SoundBuffer FromWav(string file)
         {
             return SoundBuffer.FromWav(File.OpenRead(file));
@@ -144,11 +145,9 @@ namespace Cireon.Audio
         /// </summary>
         /// <param name="file">The file to load the data from.</param>
         /// <returns>A SoundBuffer object containing the data from the specified file.</returns>
-        [Obsolete("This method is obsolete. Please use SoundBufferData.FromWav() instead." +
-            "It is not recommended to create sound buffers for every loaded file.")]
         public static SoundBuffer FromWav(Stream file)
         {
-            return new SoundBuffer(SoundBufferData.FromWav(file));
+            return SoundBuffer.FromData(SoundBufferData.FromWav(file));
         }
 
         /// <summary>
