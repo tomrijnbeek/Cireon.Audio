@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using OpenTK.Audio.OpenAL;
 
 namespace Cireon.Audio
@@ -8,16 +9,75 @@ namespace Cireon.Audio
     /// </summary>
     public static class ALHelper
     {
+        private const string logFile = "audio.log";
+
+        /// <summary>
+        /// The ways in which the ALHelper can handle errors when it encounters one.
+        /// </summary>
+        [Flags]
+        public enum ALErrorHandlingBehaviour
+        {
+            /// <summary>
+            /// Do nothing.
+            /// </summary>
+            None = 0,
+            /// <summary>
+            /// Output the error to the console.
+            /// </summary>
+            Console = 1,
+            /// <summary>
+            /// Output the error to a file (audio.log).
+            /// </summary>
+            File = 2,
+            /// <summary>
+            /// Throw an exception.
+            /// </summary>
+            Exception = 4
+        }
+
+        private static ALErrorHandlingBehaviour errorHandlingBehaviour = ALErrorHandlingBehaviour.Console;
+        
+        /// <summary>
+        /// Sets the behaviour of the OpenAL helper when it encounters an error.
+        /// </summary>
+        /// <param name="behaviour">The behaviour.</param>
+        public static void SetErrorHandlingBehaviour(ALErrorHandlingBehaviour behaviour)
+        {
+            ALHelper.errorHandlingBehaviour = behaviour;
+        }
+
         /// <summary>
         /// Checks whether OpenAL has thrown an error and throws an exception if so.
         /// </summary>
         public static void Check()
         {
-#if DEBUG
             ALError error;
-            if ((error = AL.GetError()) != ALError.NoError)
-                throw new InvalidOperationException(AL.GetErrorString(error));
-#endif
+            if ((error = AL.GetError()) == ALError.NoError)
+                return;
+
+            string errorString = AL.GetErrorString(error);
+
+            if (ALHelper.errorHandlingBehaviour.HasFlag(ALErrorHandlingBehaviour.Console))
+            {
+                Console.WriteLine("Audio error: {0} {1}", errorString, Environment.StackTrace);
+            }
+
+            if (ALHelper.errorHandlingBehaviour.HasFlag(ALErrorHandlingBehaviour.File))
+            {
+                if (!File.Exists(ALHelper.logFile))
+                    File.Create(ALHelper.logFile);
+                File.AppendAllLines(ALHelper.logFile,
+                    new[]
+                    {
+                        string.Format("[{0}] [error] {1} {2}", DateTime.Now.ToString("ddd MMM dd HH:mm:ss"), errorString,
+                            Environment.StackTrace)
+                    });
+            }
+
+            if (ALHelper.errorHandlingBehaviour.HasFlag(ALErrorHandlingBehaviour.Exception))
+            {
+                throw new InvalidOperationException(errorString);
+            }
         }
 
         /// <summary>
