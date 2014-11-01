@@ -59,19 +59,30 @@ namespace Cireon.Audio
 
             if (ALHelper.errorHandlingBehaviour.HasFlag(ALErrorHandlingBehaviour.Console))
             {
-                Console.WriteLine("Audio error: {0} {1}", errorString, Environment.StackTrace);
+                Console.WriteLine("[error] {0} {1}", errorString, Environment.StackTrace);
             }
 
             if (ALHelper.errorHandlingBehaviour.HasFlag(ALErrorHandlingBehaviour.File))
             {
-                if (!File.Exists(ALHelper.logFile))
-                    File.Create(ALHelper.logFile);
-                File.AppendAllLines(ALHelper.logFile,
-                    new[]
+                try
+                {
+                    if (!File.Exists(ALHelper.logFile))
                     {
-                        string.Format("[{0}] [error] {1} {2}", DateTime.Now.ToString("ddd MMM dd HH:mm:ss"), errorString,
-                            Environment.StackTrace)
-                    });
+                        var stream = File.Create(ALHelper.logFile);
+                        stream.Close();
+                    }
+                    File.AppendAllLines(ALHelper.logFile,
+                        new[]
+                        {
+                            string.Format("[{0}] [error] {1} {2}", DateTime.Now.ToString("ddd MMM dd HH:mm:ss"),
+                                errorString,
+                                Environment.StackTrace)
+                        });
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("[error] Logging audio error failed with error: {0}", e);
+                }
             }
 
             if (ALHelper.errorHandlingBehaviour.HasFlag(ALErrorHandlingBehaviour.Exception))
