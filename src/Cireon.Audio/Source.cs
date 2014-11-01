@@ -156,6 +156,9 @@ namespace Cireon.Audio
         /// </summary>
         public void UnqueueBuffers()
         {
+            if (this.QueuedBuffers == 0)
+                return;
+
             AL.SourceUnqueueBuffers(this.Handle, this.QueuedBuffers);
             ALHelper.Check();
         }
