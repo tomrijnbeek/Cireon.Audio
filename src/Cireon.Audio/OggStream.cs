@@ -434,9 +434,12 @@ namespace Cireon.Audio
                 readSamples = stream.Reader.ReadSamples(this.readSampleBuffer, 0, this.BufferSize);
                 SoundBufferData.CastBuffer(this.readSampleBuffer, this.castBuffer, readSamples);
             }
-            AL.BufferData(bufferId, stream.Reader.Channels == 1 ? ALFormat.Mono16 : ALFormat.Stereo16, this.castBuffer,
-                          readSamples * sizeof(short), stream.Reader.SampleRate);
-            ALHelper.Check();
+            if (readSamples > 0)
+            {
+                AL.BufferData(bufferId, stream.Reader.Channels == 1 ? ALFormat.Mono16 : ALFormat.Stereo16, this.castBuffer,
+                    readSamples * sizeof(short), stream.Reader.SampleRate);
+                ALHelper.Check();
+            }
 
             return readSamples != this.BufferSize;
         }
