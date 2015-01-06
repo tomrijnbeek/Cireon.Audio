@@ -61,6 +61,21 @@ namespace Cireon.Audio
             }
         }
 
+        private float lowPassGain;
+        /// <summary>
+        /// The gain of the low pass filter on this song.
+        /// </summary>
+        public float LowPassGain
+        {
+            get { return this.lowPassGain; }
+            set
+            {
+                this.lowPassGain = value;
+                if (this.stream != null)
+                    this.stream.LowPassGain = this.lowPassGain;
+            }
+        }
+
         private bool looping;
         /// <summary>
         /// Whether the song should be looping.
@@ -101,6 +116,7 @@ namespace Cireon.Audio
 
             this.stream.Volume = this.volume;
             this.stream.Pitch = this.pitch;
+            this.stream.LowPassGain = this.lowPassGain;
             this.stream.IsLooped = this.looping;
         }
 

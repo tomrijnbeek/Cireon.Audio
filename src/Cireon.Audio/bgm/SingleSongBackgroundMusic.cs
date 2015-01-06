@@ -101,5 +101,14 @@ namespace Cireon.Audio
         {
             this.song.Pitch = pitch;
         }
+
+        /// <summary>
+        /// Handles a change in low pass gain.
+        /// </summary>
+        /// <param name="lowPassGain">The new low pass gain.</param>
+        public void OnLowPassGainChanged(float lowPassGain)
+        {
+            this.song.LowPassGain = lowPassGain;
+        }
     }
 }

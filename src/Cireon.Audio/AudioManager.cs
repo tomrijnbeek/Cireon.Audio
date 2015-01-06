@@ -1,5 +1,6 @@
 ﻿using System;
 using OpenTK.Audio;
+using OpenTK.Audio.OpenAL;
 
 namespace Cireon.Audio
 {
@@ -35,10 +36,11 @@ namespace Cireon.Audio
         private bool disposed;
 
         private readonly AudioContext context;
+        private readonly EffectsExtension efx;
         private readonly SourceManager sourceManager;
 
         private IBackgroundMusic currentBGM;
-        private float masterVolume, musicVolume, effectsVolume, pitch;
+        private float masterVolume, musicVolume, effectsVolume, pitch, lowPassGain;
 
         /// <summary>
         /// The manager that keeps track of all OpenAL Sources.
@@ -46,6 +48,14 @@ namespace Cireon.Audio
         public SourceManager SourceManager
         {
             get { return this.sourceManager; }
+        }
+
+        /// <summary>
+        /// The OpenAL Effects extension.
+        /// </summary>
+        public EffectsExtension Efx
+        {
+            get { return this.efx; }
         }
 
         /// <summary>
@@ -111,9 +121,26 @@ namespace Cireon.Audio
             }
         }
 
+        /// <summary>
+        /// The gain of the overarching low pass filter.
+        /// </summary>
+        public float LowPassGain
+        {
+            get { return this.lowPassGain; }
+            set
+            {
+                if (this.lowPassGain == value)
+                    return;
+
+                this.lowPassGain = value;
+                this.onLowPassGainChanged();
+            }
+        }
+
         private AudioManager()
         {
             this.context = new AudioContext();
+            this.efx = new EffectsExtension();
             OggStreamer.Initialize();
 
             this.sourceManager = new SourceManager();
@@ -122,6 +149,7 @@ namespace Cireon.Audio
             this.musicVolume = 1;
             this.effectsVolume = 1;
             this.pitch = 1;
+            this.lowPassGain = 1;
         }
 
         /// <summary>
@@ -156,6 +184,14 @@ namespace Cireon.Audio
         }
         #endregion
 
+        #region Low Pass Gain
+        private void onLowPassGainChanged()
+        {
+            if (this.currentBGM != null)
+                this.currentBGM.OnLowPassGainChanged(this.LowPassGain);
+        }
+        #endregion
+
         /// <summary>
         /// Sets the background music to the specified controller.
         /// </summary>
@@ -171,6 +207,7 @@ namespace Cireon.Audio
             {
                 this.onMusicVolumeChanged();
                 this.onPitchChanged();
+                this.onLowPassGainChanged();
                 this.currentBGM.Start();
             }
         }

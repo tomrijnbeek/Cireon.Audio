@@ -61,6 +61,25 @@ namespace Cireon.Audio
             set { this.Source.Pitch = value; }
         }
 
+        private readonly int alFilterId;
+        private float lowPassGain;
+        
+        /// <summary>
+        /// The low pass gain of this oggstream.
+        /// </summary>
+        public float LowPassGain
+        {
+            get { return this.lowPassGain; }
+            set
+            {
+                if (!AudioManager.Instance.Efx.IsInitialized) return;
+
+                AudioManager.Instance.Efx.Filter(this.alFilterId, EfxFilterf.LowpassGainHF, this.lowPassGain = value);
+                AudioManager.Instance.Efx.BindFilterToSource(this.Source, this.alFilterId);
+                ALHelper.Check();
+            }
+        }
+
         /// <summary>
         /// Whether this stream plays the file repeatedly.
         /// </summary>
@@ -93,6 +112,14 @@ namespace Cireon.Audio
 
             this.Volume = 1;
             this.Pitch = 1;
+
+            if (AudioManager.Instance.Efx.IsInitialized)
+            {
+                alFilterId = AudioManager.Instance.Efx.GenFilter();
+                AudioManager.Instance.Efx.Filter(alFilterId, EfxFilteri.FilterType, (int)EfxFilterType.Lowpass);
+                AudioManager.Instance.Efx.Filter(alFilterId, EfxFilterf.LowpassGain, 1);
+                this.lowPassGain = 1;
+            }
 
             this.underlyingStream = stream;
         }

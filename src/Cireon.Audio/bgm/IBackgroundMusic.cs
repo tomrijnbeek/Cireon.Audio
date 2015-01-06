@@ -37,5 +37,10 @@ namespace Cireon.Audio
         /// </summary>
         /// <param name="pitch">The new pitch.</param>
         void OnPitchChanged(float pitch);
+        /// <summary>
+        /// Handles a change in low pass gain.
+        /// </summary>
+        /// <param name="lowPassGain">The new low pass gain.</param>
+        void OnLowPassGainChanged(float lowPassGain);
     }
 }

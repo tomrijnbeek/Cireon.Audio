@@ -18,6 +18,7 @@ namespace Cireon.Audio
 
         private float globalVolume, localVolume = 1;
         private float pitch;
+        private float lowPassGain;
 
         private FadeDefinition currentFade;
         private Action fadeCallback;
@@ -126,6 +127,17 @@ namespace Cireon.Audio
                 this.currentSong.Pitch = this.pitch;
         }
 
+        /// <summary>
+        /// Handles a change in low pass gain.
+        /// </summary>
+        /// <param name="lowPassGain">The new low pass gain.</param>
+        public void OnLowPassGainChanged(float lowPassGain)
+        {
+            this.lowPassGain = lowPassGain;
+            if (this.currentSong != null)
+                this.currentSong.LowPassGain = this.lowPassGain;
+        }
+
         private void propagateSong()
         {
             if (this.currentSong != null)
@@ -134,6 +146,7 @@ namespace Cireon.Audio
 
             this.currentSong.Volume = this.globalVolume * this.localVolume;
             this.currentSong.Pitch = this.pitch;
+            this.currentSong.LowPassGain = this.lowPassGain;
             this.currentSong.Looping = false;
 
             this.currentSong.Play();
