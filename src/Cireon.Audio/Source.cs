@@ -1,4 +1,5 @@
 ﻿using System;
+using OpenTK;
 using OpenTK.Audio.OpenAL;
 
 namespace Cireon.Audio
@@ -105,6 +106,22 @@ namespace Cireon.Audio
             set
             {
                 AL.Source(this.Handle, ALSourceb.Looping, this.repeating = value);
+                ALHelper.Check();
+            }
+        }
+
+        private Vector3 position;
+        /// <summary>
+        /// The position of the audio source in 3D space.
+        /// OpenAL uses a right hand coordinate system, with x pointing right, y pointing up, and z pointing towards the viewer.
+        /// </summary>
+        public Vector3 Position
+        {
+            get { return this.position; }
+            set
+            {
+                this.position = value;
+                AL.Source(this, ALSource3f.Position, ref this.position);
                 ALHelper.Check();
             }
         }
