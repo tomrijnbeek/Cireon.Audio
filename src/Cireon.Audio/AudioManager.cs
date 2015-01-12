@@ -33,6 +33,15 @@ namespace Cireon.Audio
             AudioManager.instance = new AudioManager();
         }
 
+        /// <summary>
+        /// Whether the AudioManager is properly initialised.
+        /// </summary>
+        /// <returns></returns>
+        public static bool Initialized
+        {
+            get { return AudioManager.instance != null; }
+        }
+
         private bool disposed;
 
         private readonly AudioContext context;
